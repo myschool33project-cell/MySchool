@@ -2598,7 +2598,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     var b=$('#ruBox'); if(!b) return; var q=normName(($('#ruQ')||{}).value);
     var inR=function(u){ return STUDENTS.some(function(s){return normName(s.name)===normName(u.name)&&sameCls(s.n,u.klass)}); };
     var a=ruList.filter(function(u){ return u.name&&(!q||normName(u.name+' '+(u.klass||'')).indexOf(q)>-1); }).sort(function(x,y){return x.name.localeCompare(y.name)}).slice(0,40);
-    b.innerHTML=a.length?a.map(function(u){ return '<div class="bk-row"><span>'+esc(u.name)+(u.klass?' · '+esc(u.klass):'')+'</span>'+(inR(u)?'<span class="act"><span class="hint">Reytingda</span><button type="button" class="pill" data-rurem="'+ruList.indexOf(u)+'">Reytingdan o\'chirish</button></span>':'<button type="button" class="pill solid" data-ruadd="'+ruList.indexOf(u)+'">Reytingga qo\'shish</button>')+'</div>'; }).join(''):'<p class="hint">Hech kim topilmadi.</p>';
+    b.innerHTML=a.length?a.map(function(u){ return '<div class="bk-row"><span>'+esc(u.name)+(u.klass?' · '+esc(u.klass):'')+'</span>'+(inR(u)?'<button type="button" class="pill" style="flex-shrink:0;white-space:nowrap" data-rurem="'+ruList.indexOf(u)+'">Reytingdan o\'chirish</button>':'<button type="button" class="pill solid" data-ruadd="'+ruList.indexOf(u)+'">Reytingga qo\'shish</button>')+'</div>'; }).join(''):'<p class="hint">Hech kim topilmadi.</p>';
   }
   function loadRU(){ usersList().then(function(a){ ruList=a; ruDraw(); }).catch(function(){ var b=$('#ruBox'); if(b) b.innerHTML='<p class="hint">Ro\'yxatni yuklab bo\'lmadi. Firebase qoidalarini tekshiring.</p>'; }); }
   function addEntries(list,msg){
