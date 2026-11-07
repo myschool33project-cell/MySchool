@@ -571,6 +571,36 @@ tr.t1 .rk{background:#f5b301;color:#3a2800}tr.t2 .rk{background:#8da2cc;color:#0
 #phBox{position:fixed;inset:0;z-index:9999;background:rgba(5,10,25,.88);display:grid;place-items:center;padding:16px;cursor:zoom-out}
 #phBox img{max-width:94vw;max-height:88vh;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 #phBox button{position:fixed;top:14px;right:14px;width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:22px;cursor:pointer}
+
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin:6px 0 18px}
+.pod2{flex:1 1 0;max-width:180px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;position:relative}
+.crown2{position:absolute;top:-22px;line-height:0;z-index:2}.crown2 .crown{width:26px;height:26px;animation:msBob 2.2s ease-in-out infinite}
+.avt{display:inline-grid;place-items:center;border-radius:50%;overflow:hidden;background:var(--blue-soft,#e6eeff);color:var(--blue,#2a5bd7);font-weight:800;flex:none}
+.avt img{width:100%;height:100%;object-fit:cover;display:block}
+.avt.lg{width:64px;height:64px;font-size:24px;border:3px solid #fff;box-shadow:0 4px 14px rgba(15,30,80,.18)}
+.avt.lg .cl{font-size:14px;font-style:normal}
+.pod2.r1 .avt.lg{width:76px;height:76px;border-color:#f5b301;margin-top:14px}
+.pod2.r2 .avt.lg{border-color:#9aa6bd}.pod2.r3 .avt.lg{border-color:#d9763f}
+.avt.sm{width:28px;height:28px;font-size:13px}
+.nm2{font-size:13.5px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xp{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
+.pod2.r1 .xp{background:#ffd75e;color:#3a2800}.pod2.r2 .xp{background:#dfe4ee;color:#2a3550}.pod2.r3 .xp{background:#f2b48d;color:#3a1500}
+.pod2 .mv{margin:0;font-size:11px}
+.pod2 .blk{width:100%;margin-top:4px;border-radius:12px 12px 0 0;display:grid;place-items:center;color:#fff;font-weight:800;font-size:34px;line-height:1}
+.pod2.r1 .blk{height:120px;background:linear-gradient(180deg,#f9c62e,#e0a100)}
+.pod2.r2 .blk{height:88px;background:linear-gradient(180deg,#b3bdd0,#8793ab)}
+.pod2.r3 .blk{height:68px;background:linear-gradient(180deg,#e39a6a,#c46a34)}
+.nw{display:flex;align-items:center;gap:8px;min-width:0}.nw span:last-child{min-width:0;overflow-wrap:anywhere}
+#rankBody td{vertical-align:middle}
+#rankBody .clc{white-space:nowrap}
+#rankBody .rkc{white-space:nowrap}
+#rankBody .rkc .mv{margin-left:4px}
+#rankBody .rkc .mv .ic{width:11px;height:11px}
+.ptc{white-space:nowrap}.ptc .dp{display:block;font-size:10.5px;font-weight:800}
+tr.t1 td,tr.t2 td,tr.t3 td{background:none}
+.rk{min-width:24px;height:24px;font-size:13px}
+.av-s{width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px}
+@media (max-width:480px){.avt.lg{width:54px;height:54px}.pod2.r1 .avt.lg{width:64px;height:64px}.nm2{font-size:12.5px}.pod2 .blk{font-size:28px}}
 </style>
 
 <div id="loader" role="status" aria-live="polite">
@@ -653,9 +683,8 @@ tr.t1 .rk{background:#f5b301;color:#3a2800}tr.t2 .rk{background:#8da2cc;color:#0
       <div class="top-in">
         <div class="logo"><span class="logo-mark" id="logoMark2"></span><span>MySchool</span></div>
         <div class="top-gap"></div>
-        <button type="button" class="icon-btn" id="themeBtn" aria-label="Theme"><span id="themeIc"></span></button>
         <div class="lang"><button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Til"><span id="langIc"></span><span id="langCode">UZ</span></button><ul class="lmenu" id="langMenu" hidden></ul></div><button type="button" class="icon-btn" id="bell" aria-label="Bildirishnomalar" aria-expanded="false" aria-controls="notes"><span id="bellIc"></span><span class="dot" id="bellDot"></span></button>
-        <div class="userwrap"><button type="button" class="user" id="userBtn" aria-haspopup="true" aria-expanded="false" aria-label="Mening profilim"><span class="av" id="avIc"></span><span class="user-name" data-pf="name">Foydalanuvchi</span><span id="chevIc"></span></button><div class="umenu" id="userMenu" hidden><button type="button" data-go="profil"><span data-ic="user"></span><span>Mening profilim</span></button><button type="button" data-go="admin"><span data-ic="crown"></span><span>Admin</span></button><button type="button" id="menuOut"><span data-ic="logout"></span><span>Chiqish</span></button></div></div>
+        <div class="userwrap"><button type="button" class="user" id="userBtn" aria-haspopup="true" aria-expanded="false" aria-label="Mening profilim"><span class="av" id="avIc"></span><span class="user-name" data-pf="name">Foydalanuvchi</span><span id="chevIc"></span></button><div class="umenu" id="userMenu" hidden><button type="button" data-go="profil"><span data-ic="user"></span><span>Mening profilim</span></button><button type="button" data-go="admin"><span data-ic="crown"></span><span>Admin</span></button><button type="button" id="themeMenuBtn"><span id="themeIc"></span><span id="themeLbl"></span></button><button type="button" id="menuOut"><span data-ic="logout"></span><span>Chiqish</span></button></div></div>
         <div class="notes" id="notes" hidden>
           <h3>Bildirishnomalar</h3>
           <ul id="noteList"></ul><p class="note-empty" id="noteEmpty" hidden>Hozircha bildirishnomalar yo'q.</p>
@@ -864,7 +893,7 @@ tr.t1 .rk{background:#f5b301;color:#3a2800}tr.t2 .rk{background:#8da2cc;color:#0
           <label id="aDateRow" hidden><span id="aDateLbl">Sana</span><input class="field" id="aDate" maxlength="80" autocomplete="off"></label>
           <label>Qisqa matn (kartada ko'rinadi)<input class="field" id="aText" maxlength="160" autocomplete="off" placeholder="Bir-ikki gapda"></label>
           <label>To'liq matn<textarea class="field" id="aMore" rows="7" placeholder="Batafsil yozing..."></textarea></label>
-          <label>Havola (masalan, Telegram kanal)<input class="field" id="aLink" type="url" maxlength="300" autocomplete="off" placeholder="https://t.me/..."></label>
+          <label>Havola (masalan, Telegram kanal)<input class="field" id="aLink" type="text" inputmode="url" maxlength="300" autocomplete="off" placeholder="https://t.me/..."></label>
           <label>Rasmlar (6 tagacha)<input type="file" id="aImgs" accept="image/*" multiple></label>
           <p class="hint">Birinchi rasm muqova bo'ladi. Rasmlar avtomatik kichraytiriladi.</p>
           <div class="thumbs" id="aThumbs"></div>
@@ -1038,6 +1067,7 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
       }
     }catch(e){}
     root.classList.add('authed'); gate.hidden=true;
+    try{ if(window.__msPubAvatar) window.__msPubAvatar(); }catch(e){}
   }
   /* ---- Registered users: saved so the admin can see them (Firebase DB, or this browser in demo mode) ---- */
   var DBU=(cfg.dbUrl||'').replace(/\/$/,'');
@@ -1078,6 +1108,10 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     var done=false; function go(){ if(done) return; done=true; fn(); }
     saveUser(u,p,fresh,false).then(go,go); setTimeout(go,2500);
   }
+  window.__msAvatar=function(p,thumb){
+    if(demo||!DBU||!fb||!fb.currentUser||!cur||isAdminUser(cur)) return; var uid=cur.uid;
+    fb.currentUser.getIdToken().then(function(t){ var u=DBU+'/avatars/'+encodeURIComponent(uid)+'.json?auth='+t; return thumb?fetch(u,{method:'PUT',body:JSON.stringify({n:p.name||'',k:p.klass||'',p:thumb})}):fetch(u,{method:'DELETE'}); }).catch(function(){});
+  };
   window.__msSyncUser=function(p){ if(cur&&!isAdminUser(cur)) saveUser(cur,p,false,true); };
   window.__msGetToken=function(){ return (fb&&fb.currentUser)?fb.currentUser.getIdToken(true).catch(function(){return '';}):Promise.resolve(''); };
   function toInfo(u){ fillInfo(u); root.classList.remove('authed'); gate.hidden=false; showStep('info'); }
@@ -1133,7 +1167,8 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
       started=true; firebase.initializeApp(cfg); fb=firebase.auth();
       fb.getRedirectResult().catch(function(){});
       var first=true;
-      fb.onAuthStateChanged(function(u){ if(first){ first=false; if(u&&!pass){ fb.signOut(); return; } } onUser(u); });
+      try{ fb.setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){}
+      fb.onAuthStateChanged(function(u){ first=false; onUser(u); }); /* stay signed in until the person taps Chiqish */
       return true;
     }
     A={
@@ -1885,6 +1920,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     });
     return {classes:cl,students:st};
   }
+  var AVM={}, AVU={}, avT=0;
   function ranked(list,key){
     var a=list.map(function(x){ var o={}; for(var k in x) o[k]=x[k]; return o; });
     a.sort(function(x,y){ return y.sc-x.sc||String(x[key]).localeCompare(String(y[key])); });
@@ -1919,6 +1955,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     return vals;
   }
   function renderRating(){
+    avRefresh();
     var isS=rs.mode==='s', data=computeRating(rs.p), vals=fillRFilter();
     $$('#rMode button').forEach(function(b){ b.setAttribute('aria-pressed',String(b.getAttribute('data-rm')===rs.mode)); });
     var full=ranked(data.students,'name'), me=findMe(data.students), meR=me&&full.filter(function(x){return x.id===me.id})[0];
@@ -1956,17 +1993,18 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       pl.forEach(function(x){ c0[x[k0]]=x; });
       ranked(list.map(function(x){ return {k:x[k0],name:isS?x.name:x.n,sc:c0[x[k0]]?c0[x[k0]].sc:0}; }),'name').forEach(function(x){ pm[x.k]=x; });
     }
-    function mvOf(c){ var p=pm[isS?c.id:c.n]; if(!p) return ''; var d=p.r-c.r, dp=Math.round((c.sc-p.sc)*10)/10; if(!d&&!dp) return ''; return '<span class="mv">'+delta(d)+(dp?'<small class="'+(dp>0?'up':'down')+'">'+(dp>0?'+':'')+fmtPts(dp)+'</small>':'')+'</span>'; }
-    function tagOf(c){ return (c.sc>0&&c.r<=3)?'<span class="tag t'+c.r+'">'+tr(TAG[c.r-1])+'</span>':''; }
+    function mvOf(c){ var p=pm[isS?c.id:c.n]; if(!p) return ''; var d=p.r-c.r; return d?'<span class="mv">'+delta(d)+'</span>':''; }
+    function dpOf(c){ var p=pm[isS?c.id:c.n]; if(!p) return ''; var dp=Math.round((c.sc-p.sc)*10)/10; return dp?'<small class="dp '+(dp>0?'up':'down')+'">'+(dp>0?'+':'')+fmtPts(dp)+'</small>':''; }
     var top=list.slice(0,3), show=list.length&&list[0].sc>0;
     var order=[[top[1],2],[top[0],1],[top[2],3]].filter(function(x){return x[0]&&x[0].sc>0});
     $('#podium').innerHTML=show?order.map(function(x){
       var c=x[0],r=x[1];
-      return '<div class="pod r'+r+'">'+(r===1?ic('crown','crown'):'')+'<span class="medal">'+r+'</span><span class="cls'+(isS?' nm':'')+'">'+esc(isS?c.name:c.n)+'</span><span class="pts">'+(isS?esc(c.n)+' · ':'')+fmtPts(c.sc)+' '+tr('ball')+'</span>'+tagOf(c)+mvOf(c)+'</div>';
+      var nmv=isS?c.name:c.n;
+      return '<div class="pod2 r'+r+'">'+(r===1?'<span class="crown2">'+ic('crown','crown')+'</span>':'')+(isS?avBox(c.name,c.n,'lg'):'<span class="avt lg"><i class="cl">'+esc(c.n)+'</i></span>')+'<b class="nm2">'+esc(nmv)+'</b><span class="xp">'+fmtPts(c.sc)+' '+tr('ball')+'</span>'+mvOf(c)+'<div class="blk"><span>'+r+'</span></div></div>';
     }).join(''):'';
     function isMe(c){ return isS?(meR&&c.id===meR.id):sameCls(c.n,myK()); }
     function row(c){
-      var tp=(c.sc>0&&c.r<=3)?' t'+c.r:''; return '<tr class="'+(isMe(c)?'me':'')+tp+'"><td><span class="rk">'+c.r+'</span>'+mvOf(c)+'</td>'+(isS?'<td>'+esc(c.name)+tagOf(c)+'</td><td>'+esc(c.n)+'</td>':'<td>'+esc(c.n)+tagOf(c)+'</td><td>'+c.k+'</td>')+'<td>'+fmtPts(c.sc)+'</td></tr>';
+      var tp=(c.sc>0&&c.r<=3)?' t'+c.r:''; return '<tr class="'+(isMe(c)?'me':'')+tp+'"><td class="rkc"><span class="rk">'+c.r+'</span>'+mvOf(c)+'</td>'+(isS?'<td><div class="nw">'+avBox(c.name,c.n,'sm')+'<span>'+esc(c.name)+'</span></div></td><td class="clc">'+esc(c.n)+'</td>':'<td><div class="nw"><span>'+esc(c.n)+'</span></div></td><td>'+c.k+'</td>')+'<td class="ptc">'+fmtPts(c.sc)+dpOf(c)+'</td></tr>';
     }
     var rows=rs.all?list:list.slice(0,7), html=rows.map(row).join('');
     if(!rs.all){
@@ -1999,14 +2037,44 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   });
 
   
+
+  /* ---------- Profile pictures of everybody (small copies in Firebase "avatars") ---------- */
+  function avFor(name,klass){
+    if(!GUEST&&!isAdmin&&profile.photo&&normName(profile.name)===normName(name)&&sameCls(profile.klass,klass)) return profile.photo;
+    return AVM[normName(name)+'|'+normName(klass)]||'';
+  }
+  function avBox(name,klass,cls){
+    var p=avFor(name,klass);
+    return '<span class="avt '+(cls||'')+'">'+(p?'<img src="'+p+'" alt="">':'<i>'+esc(String(name||'?').trim().charAt(0).toUpperCase())+'</i>')+'</span>';
+  }
+  function loadAvatars(cb){
+    if(!(FB&&FB.url)) return;
+    fetch(FB.url+'/avatars.json').then(okj).then(function(d){
+      AVM={}; AVU={}; d=d||{};
+      Object.keys(d).forEach(function(k){ var x=d[k]; if(x&&x.p&&String(x.p).indexOf('data:image/')===0){ AVM[normName(x.n)+'|'+normName(x.k)]=x.p; AVU[k]=x.p; } });
+      if(cb) cb();
+    }).catch(function(){});
+  }
+  function avRefresh(){ if(FB&&FB.url&&Date.now()-avT>60000){ avT=Date.now(); loadAvatars(function(){ renderRating(); }); } }
+  function thumbOf(u){
+    return new Promise(function(res){
+      if(!u) return res(''); var im=new Image(); im.onerror=function(){ res(''); };
+      im.onload=function(){ var k=Math.min(1,120/Math.max(im.width,im.height)), c=document.createElement('canvas'); c.width=Math.round(im.width*k); c.height=Math.round(im.height*k); c.getContext('2d').drawImage(im,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',0.7)); };
+      im.src=u;
+    });
+  }
+  function pubAvatar(){ if(GUEST||isAdmin||!window.__msAvatar) return; thumbOf(profile.photo).then(function(t){ window.__msAvatar(profile,t); }); }
+  window.__msPubAvatar=pubAvatar;
+
 /* ---------- Theme toggle + profile photo viewer ---------- */
   ICONS.sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
   ICONS.moon='<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+  D["Qorong'u rejim"]={ru:'Тёмный режим',en:'Dark mode',kk:'Қараңғы режим'}; D["Yorug' rejim"]={ru:'Светлый режим',en:'Light mode',kk:'Жарық режим'};
   (function(){
     var R=document.documentElement;
     function now(){ return R.getAttribute('data-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'); }
-    function paint(){ var d=now()==='dark'; $('#themeIc').innerHTML=ic(d?'sun':'moon'); $('#themeBtn').setAttribute('aria-pressed',String(d)); }
-    $('#themeBtn').addEventListener('click',function(){ var t=now()==='dark'?'light':'dark'; R.setAttribute('data-theme',t); try{ localStorage.setItem('myschool-theme',t); }catch(e){} paint(); });
+    function paint(){ var d=now()==='dark'; $('#themeIc').innerHTML=ic(d?'sun':'moon'); $('#themeLbl').textContent=d?"Yorug' rejim":"Qorong'u rejim"; }
+    $('#themeMenuBtn').addEventListener('click',function(){ var t=now()==='dark'?'light':'dark'; R.setAttribute('data-theme',t); try{ localStorage.setItem('myschool-theme',t); }catch(e){} paint(); });
     paint();
   })();
   $('#pfAv').addEventListener('click',function(e){
@@ -2057,7 +2125,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       if(nm) profile.name=nm; if(kl) profile.klass=kl; if(sc) profile.school=sc; if(dv) profile.dob=dv.split('-').reverse().join('.');
       profile.phone=ph; if(pendPhoto!==null) profile.photo=pendPhoto;
       if(!persistProfile()){ profile=JSON.parse(prev); toast(tr('Rasm juda katta. Kichikroq rasm tanlang.')); return; }
-      pendPhoto=null; fillProfile(); renderRating(); setEditing(false); toast(tr("Ma'lumotlar saqlandi"));
+      pendPhoto=null; fillProfile(); renderRating(); setEditing(false); pubAvatar(); toast(tr("Ma'lumotlar saqlandi"));
     }
     if(ph!==profile.phone&&window.__msClaimPhone&&!isAdmin){
       window.__msClaimPhone(ph,profile.phone).then(function(st){
@@ -2098,7 +2166,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
         link:cleanLink(x.link),imgs:(Array.isArray(x.imgs)?x.imgs:[]).filter(function(u){return typeof u==='string'&&u.indexOf('data:image/')===0}).slice(0,6)};
     });
   }
-  function cleanLink(u){ u=String(u||'').trim(); return /^https?:\/\/[^\s]+$/i.test(u)?u.slice(0,300):''; }
+  function cleanLink(u){ u=String(u||'').trim(); if(!u) return ''; if(!/^[a-z][a-z0-9+.-]*:/i.test(u)&&/^[^\s\/]+\.[^\s]+$/.test(u)) u='https://'+u; return /^(https?:\/\/|tg:\/\/|mailto:|tel:)[^\s]+$/i.test(u)?u.slice(0,300):''; }
   function num(v,lo,hi,def){ v=parseFloat(v); if(isNaN(v)) v=def; return Math.min(hi,Math.max(lo,v)); }
   function cleanClasses(a){
     if(!Array.isArray(a)) return null;
@@ -2615,7 +2683,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   var dupCount={}, uQ='';
   function dupKey(u){ if(!u.name) return ''; var ph=String(u.phone||'').replace(/\D/g,''); return normName(u.name)+'|'+(ph||u.dob||'-'); }
   function userCard(u){
-    return '<div class="card arow"><div><b>'+esc(u.name||'—')+(u.klass?' · '+esc(u.klass):'')+'</b>'+(u.banned?' <span class="stat rejected">Bloklangan</span>':'')+(dupCount[dupKey(u)]>1?' <span class="stat pending">Takroriy ma\'lumot</span>':'')+
+    return '<div class="card arow"><div><b>'+(AVU[u.uid]?'<img class="av-s" src="'+AVU[u.uid]+'" alt="">':'')+esc(u.name||'—')+(u.klass?' · '+esc(u.klass):'')+'</b>'+(u.banned?' <span class="stat rejected">Bloklangan</span>':'')+(dupCount[dupKey(u)]>1?' <span class="stat pending">Takroriy ma\'lumot</span>':'')+
       '<span class="date">Maktab: '+esc(u.school||'—')+'</span>'+
       '<span class="date">Tug\'ilgan sana: '+esc(u.dob||'—')+'</span>'+
       '<span class="date">Telefon: '+esc(u.phone||'—')+'</span>'+
