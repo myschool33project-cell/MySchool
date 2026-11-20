@@ -607,6 +607,80 @@ tr.t1 td,tr.t2 td,tr.t3 td{background:none}
 .rk{min-width:24px;height:24px;font-size:13px}
 .av-s{width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px}
 @media (max-width:480px){.avt.lg{width:54px;height:54px}.pod2.r1 .avt.lg{width:64px;height:64px}.nm2{font-size:12.5px}.pod2 .blk{font-size:28px}}
+
+/* --- v2: dropdowns + Arizalar --- */
+#gate [data-g]:empty{display:none}
+#gate .g-main select{width:100%;height:46px;margin:6px 0;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);color:var(--ink);font-size:14px;font-weight:600;outline:none;cursor:pointer}
+#gate .g-main select:focus{border-color:var(--blue)}
+select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
+.ap-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:2px}
+.ap-sum{color:var(--muted);font-weight:700;font-size:13px}
+.ap-grp{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:14px 16px;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.ap-grp:hover{border-color:var(--brand)}
+.ap-grp>span:first-child{min-width:0}
+.ap-grp b{display:block;overflow-wrap:anywhere}
+.ap-badges{display:flex;align-items:center;gap:8px;flex:none}
+.ap-n{min-width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:var(--blue-soft);color:var(--blue);font-weight:800}
+.ap-kl{display:inline-block;margin-left:6px;padding:1px 9px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-size:12px;font-weight:800}
+
+/* --- v3: phone-only size reduction (sizes only, nothing else changes) --- */
+@media (max-width:879px){
+  body{font-size:14px}
+  .top-in{height:58px}
+  .icon-btn{width:38px;height:38px}
+  .top .logo{font-size:17px}
+  .top .logo-mark{width:30px;height:30px}
+  .head{margin:2px 0 16px;gap:10px 16px}
+  .head h1{font-size:clamp(21px,6vw,24px)}
+  .head p{font-size:13.5px;margin-top:4px}
+  .sub{font-size:17px;margin:22px 0 10px}
+  .card{border-radius:16px}
+  .btn{padding:11px 20px;font-size:14px}
+  .btn.small{padding:8px 14px;font-size:12.5px}
+  .pill{padding:6px 12px;font-size:12px}
+  .field{height:42px;font-size:13.5px}
+  .hero{border-radius:22px;min-height:0}
+  .hero-copy{gap:10px;padding:22px 18px 0}
+  .hero h1{font-size:clamp(23px,6.6vw,27px)}
+  .hero p{font-size:13.5px}
+  .hero-slides{min-height:185px}
+  .qc{padding:14px 8px;gap:7px;font-size:13px;border-radius:16px}
+  .feat-body h2{font-size:17px}
+  .feat-body p,.row p,.ev p{font-size:13px}
+  .row h3{font-size:14.5px}
+  .mini h3{font-size:13.5px}
+  .ev{gap:12px;padding:11px}
+  .ev h3{font-size:15px;margin:6px 0 4px}
+  .chip{font-size:11px;padding:2px 9px}
+  .when{font-size:12px}
+  .tabs-f{margin-bottom:14px;gap:6px}
+  .tabs-f button{padding:6px 13px;font-size:12.5px}
+  .seg button{padding:8px 10px;font-size:13px}
+  .pod{padding:12px 6px;border-radius:16px}
+  .pod.r1{padding-block:18px}
+  .pod .cls{font-size:clamp(17px,5vw,21px)}
+  .pod .pts{font-size:12.5px}
+  .medal{width:36px;height:36px;font-size:16px}
+  .r1 .medal{width:42px;height:42px;font-size:19px}
+  .avt.lg{width:50px;height:50px;font-size:19px}
+  .pod2.r1 .avt.lg{width:58px;height:58px}
+  .pod2.r1 .blk{height:96px}.pod2.r2 .blk{height:72px}.pod2.r3 .blk{height:56px}
+  .pod2 .blk{font-size:26px}
+  .nm2{font-size:12.5px}
+  .myres .st b{font-size:20px}
+  .myres .who b{font-size:14.5px}
+  .prof h2{font-size:clamp(19px,5.4vw,22px)}
+  .avatar{width:70px;height:70px}
+  .q{font-size:13.5px;padding:12px 14px}
+  .ans{font-size:13px}
+  th,td{font-size:13px}
+  .tabs button{padding:4px 0}
+  .tabs button .ic{width:21px;height:21px}
+  #gate h2{font-size:20px}
+  #gate .g-main input,#gate .g-main select{height:42px;font-size:13.5px}
+  #gate .g-google{height:46px;font-size:14px}
+  #gate .g-guest{height:42px;font-size:13px}
+}
 </style>
 
 
@@ -649,8 +723,8 @@ tr.t1 td,tr.t2 td,tr.t3 td{background:none}
           <p class="g-sub" data-g="info_p"></p>
           <form id="fInfo" novalidate>
             <div class="g-row"><input type="text" id="uName" data-gph="name" data-req autocomplete="given-name" maxlength="30"><input type="text" id="uSur" data-gph="surname" data-req autocomplete="family-name" maxlength="30"></div>
-            <input type="text" id="uSchool" data-gph="school" data-req maxlength="60">
-            <input type="text" id="uKlass" data-gph="klass" data-req maxlength="10">
+            <select id="uSchool" data-req aria-label="Maktab"></select>
+            <select id="uKlass" data-req aria-label="Sinf"></select>
             <label class="g-lbl" for="uDob"><span data-g="dob_t"></span><small data-g="dob_h"></small></label>
             <input type="date" id="uDob" data-req min="1980-01-01">
             <input type="tel" id="uPhone" data-gph="phone" data-req autocomplete="tel" maxlength="20">
@@ -867,7 +941,7 @@ tr.t1 td,tr.t2 td,tr.t3 td{background:none}
         <div class="head">
           <div>
             <h1>Arizalar</h1>
-            <p>Bellashuvlar va tashabbuslarga kelgan arizalarni tasdiqlang yoki rad eting.</p>
+            <p>Bellashuv yoki tashabbusni tanlang: faqat unga topshirilgan arizalar ko'rinadi.</p>
           </div>
         </div>
         <div id="apList" style="display:grid;gap:10px;max-width:760px"></div>
@@ -892,6 +966,7 @@ tr.t1 td,tr.t2 td,tr.t3 td{background:none}
           <button type="button" data-atype="hero" aria-pressed="false">Bosh sahifa</button>
           <button type="button" data-atype="users" aria-pressed="false">Foydalanuvchilar</button>
           <button type="button" data-atype="faq" aria-pressed="false">Savollar</button>
+          <button type="button" data-atype="schools" aria-pressed="false">Maktablar</button>
         </div>
         <div class="card adm" id="aForm">
           <label>Sarlavha<input class="field" id="aTitle" maxlength="120" autocomplete="off"></label>
@@ -940,8 +1015,8 @@ tr.t1 td,tr.t2 td,tr.t3 td{background:none}
             </div>
           </div>
           <div class="facts">
-            <div class="fact"><span class="tile" data-ic="trophy"></span><div><small>Sinf</small><b class="v" data-pf="klass">9-A</b><input class="field e" id="in-klass" aria-label="Sinf" autocomplete="off" maxlength="10"></div></div>
-            <div class="fact"><span class="tile" data-ic="building"></span><div><small>Maktab</small><b class="v" data-pf="school">1-son maktab</b><input class="field e" id="in-school" aria-label="Maktab" autocomplete="off" maxlength="60"></div></div>
+            <div class="fact"><span class="tile" data-ic="trophy"></span><div><small>Sinf</small><b class="v" data-pf="klass">9-A</b><select class="field e" id="in-klass" aria-label="Sinf"></select></div></div>
+            <div class="fact"><span class="tile" data-ic="building"></span><div><small>Maktab</small><b class="v" data-pf="school">1-son maktab</b><select class="field e" id="in-school" aria-label="Maktab"></select></div></div>
             <div class="fact"><span class="tile" data-ic="calendar"></span><div><small>Tug'ilgan sana</small><b class="v" data-pf="dob">12.03.2010</b><input class="field e" id="in-dob" type="date" aria-label="Tug'ilgan sana" min="1980-01-01"></div></div>
             <div class="fact"><span class="tile" data-ic="phone"></span><div><small>Telefon raqami</small><b class="v" data-pf="phone">—</b><input class="field e" id="in-phone" type="tel" aria-label="Telefon raqami" autocomplete="off" maxlength="20"></div></div>
             <div class="fact wide"><span class="tile" data-ic="mail"></span><div><small>Email</small><b data-pf="email">—</b></div></div>
@@ -1011,10 +1086,10 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
   var LANGS=[['uz','O‘zbekcha','UZ'],['ru','Русский','RU'],['en','English','EN'],['kk','Қазақша','KZ']];
   var lang='uz'; try{ var sl=localStorage.getItem('myschool-lang'); if(LANGS.some(function(l){return l[0]===sl})) lang=sl; }catch(e){}
   var G={
-    uz:{welcome_t:'Xush kelibsiz!',welcome_p:"MySchool'ga Google hisobingiz orqali kiring. Hisobingizni tanlang, shaxsiy ma'lumotlarni to'ldiring va maktab hayotiga qo'shiling.",start_t:"Kirish va ro'yxatdan o'tish",start_p:'Davom etish uchun Google hisobingizni tanlang.',google:'Google orqali davom etish',need_google:"Ro'yxatdan o'tish va kirish faqat Google hisobi orqali amalga oshadi.",or:'yoki',dupphone:"Bu telefon raqami boshqa hisobda ro'yxatdan o'tgan. Boshqa raqam kiriting",regfail:"Ro'yxatdan o'tib bo'lmadi. Internetni tekshirib, qayta urining",guest:'Mehmon sifatida davom etish',guest_note:"Mehmonlar faqat ko'rishi mumkin: ariza topshirish, profil va o'z reytingi mavjud emas.",info_t:"Shaxsiy ma'lumotlar",info_p:"Ro'yxatdan o'tishni yakunlash uchun ma'lumotlaringizni to'ldiring.",'switch':'Boshqa hisob',enter:'Saytga kirish',name:'Ism',surname:'Familiya',school:'Maktab',klass:'Sinf (9-A)',dob_l:"Tug'ilgan sana",dob_t:"Tug'ilgan sana *",dob_h:"Kun, oy va yilni tanlang (masalan: 12.03.2010)",phone:'Telefon raqami',fill:"Barcha (*) maydonlarni to'ldiring",baddob:"Tug'ilgan sanani to'g'ri kiriting",badphone:"Telefon raqami noto'g'ri",net:"Tarmoq xatosi. Qayta urinib ko'ring",domain:"Bu sayt manzili Firebase'da ruxsat etilmagan (Authorized domains)",err:"Kirib bo'lmadi. Qayta urinib ko'ring",demo:"Demo rejim: Firebase hali sozlanmagan, hisob tanlash taqlid qilinadi va faqat shu brauzerda ishlaydi.",pick_t:'Hisobni tanlang',pick_other:'Boshqa Google hisob (email)',next:'Davom etish',cancel:'Bekor qilish',bademail:"Email noto'g'ri"},
-    ru:{welcome_t:'Добро пожаловать!',welcome_p:'Войдите в MySchool через аккаунт Google. Выберите аккаунт, заполните личные данные и присоединяйтесь к школьной жизни.',start_t:'Вход и регистрация',start_p:'Выберите аккаунт Google, чтобы продолжить.',google:'Продолжить с Google',need_google:'Регистрация и вход возможны только через аккаунт Google.',or:'или',dupphone:'Этот номер телефона уже зарегистрирован на другом аккаунте. Введите другой номер',regfail:'Не удалось завершить регистрацию. Проверьте интернет и попробуйте ещё раз',guest:'Продолжить как гость',guest_note:'Гости могут только смотреть: подача заявок, профиль и личный рейтинг недоступны.',info_t:'Личные данные',info_p:'Заполните данные, чтобы завершить регистрацию.','switch':'Другой аккаунт',enter:'Войти на сайт',name:'Имя',surname:'Фамилия',school:'Школа',klass:'Класс (9-A)',dob_l:'Дата рождения',dob_t:'Дата рождения *',dob_h:'Выберите день, месяц и год (например: 12.03.2010)',phone:'Номер телефона',fill:'Заполните все поля (*)',baddob:'Введите корректную дату рождения',badphone:'Неверный номер телефона',net:'Ошибка сети. Попробуйте ещё раз',domain:'Адрес сайта не добавлен в Authorized domains Firebase',err:'Не удалось войти. Попробуйте ещё раз',demo:'Демо-режим: Firebase ещё не настроен, выбор аккаунта имитируется и работает только в этом браузере.',pick_t:'Выберите аккаунт',pick_other:'Другой аккаунт Google (email)',next:'Далее',cancel:'Отмена',bademail:'Неверный email'},
-    en:{welcome_t:'Welcome!',welcome_p:'Sign in to MySchool with your Google account. Choose an account, fill in your personal details and join school life.',start_t:'Sign in or register',start_p:'Choose your Google account to continue.',google:'Continue with Google',need_google:'Registration and sign-in are only possible with a Google account.',or:'or',dupphone:'This phone number is already registered to another account. Enter a different number',regfail:'Registration failed. Check your connection and try again',guest:'Continue as guest',guest_note:'Guests can only browse: applying, profile and your own rating are not available.',info_t:'Personal information',info_p:'Fill in your details to finish registration.','switch':'Use another account',enter:'Enter the site',name:'First name',surname:'Surname',school:'School',klass:'Class (9-A)',dob_l:'Date of birth',dob_t:'Date of birth *',dob_h:'Pick day, month and year (e.g. 12.03.2010)',phone:'Phone number',fill:'Please fill in all (*) fields',baddob:'Enter a valid date of birth',badphone:'Invalid phone number',net:'Network error. Please try again',domain:'This site address is not in Firebase Authorized domains',err:'Could not sign in. Please try again',demo:'Demo mode: Firebase is not set up yet, account choosing is simulated and only works in this browser.',pick_t:'Choose an account',pick_other:'Another Google account (email)',next:'Next',cancel:'Cancel',bademail:'Invalid email'},
-    kk:{welcome_t:'Қош келдіңіз!',welcome_p:'MySchool-ға Google аккаунтыңыз арқылы кіріңіз. Аккаунтты таңдаңыз, жеке деректеріңізді толтырып, мектеп өміріне қосылыңыз.',start_t:'Кіру және тіркелу',start_p:'Жалғастыру үшін Google аккаунтын таңдаңыз.',google:'Google арқылы жалғастыру',need_google:'Тіркелу және кіру тек Google аккаунты арқылы жүзеге асады.',or:'немесе',dupphone:'Бұл телефон нөмірі басқа аккаунтта тіркелген. Басқа нөмір енгізіңіз',regfail:'Тіркелу мүмкін болмады. Интернетті тексеріп, қайталап көріңіз',guest:'Қонақ ретінде жалғастыру',guest_note:'Қонақтар тек қарай алады: өтінім беру, профиль және жеке рейтинг қолжетімсіз.',info_t:'Жеке деректер',info_p:'Тіркеуді аяқтау үшін деректеріңізді толтырыңыз.','switch':'Басқа аккаунт',enter:'Сайтқа кіру',name:'Аты',surname:'Тегі',school:'Мектеп',klass:'Сынып (9-A)',dob_l:'Туған күні',dob_t:'Туған күні *',dob_h:'Күнін, айын және жылын таңдаңыз (мысалы: 12.03.2010)',phone:'Телефон нөмірі',fill:'Барлық (*) өрістерді толтырыңыз',baddob:'Туған күнді дұрыс енгізіңіз',badphone:'Телефон нөмірі қате',net:'Желі қатесі. Қайталап көріңіз',domain:'Бұл сайт мекенжайы Firebase-тің рұқсат етілген домендер (Authorized domains) тізіміне қосылмаған',err:'Кіру мүмкін болмады. Қайталап көріңіз',demo:'Демо режим: Firebase әлі бапталмаған, аккаунт таңдау тек көрсетілім үшін және тек осы браузерде жұмыс істейді.',pick_t:'Аккаунтты таңдаңыз',pick_other:'Басқа Google аккаунты (email)',next:'Әрі қарай',cancel:'Бас тарту',bademail:'Email қате'}
+    uz:{welcome_t:'Xush kelibsiz!',welcome_p:'',start_t:'Kirish',start_p:'',google:'Google orqali davom etish',need_google:'',or:'yoki',dupphone:"Bu telefon raqami boshqa hisobda ro'yxatdan o'tgan. Boshqa raqam kiriting",regfail:"Ro'yxatdan o'tib bo'lmadi. Internetni tekshirib, qayta urining",guest:'Mehmon sifatida davom etish',guest_note:'',info_t:"Shaxsiy ma'lumotlar",info_p:"Ro'yxatdan o'tishni yakunlash uchun ma'lumotlaringizni to'ldiring.",'switch':'Boshqa hisob',enter:'Saytga kirish',name:'Ism',surname:'Familiya',school:'Maktab',klass:'Sinf (9-A)',dob_l:"Tug'ilgan sana",dob_t:"Tug'ilgan sana *",dob_h:"Kun, oy va yilni tanlang (masalan: 12.03.2010)",phone:'Telefon raqami',fill:"Barcha (*) maydonlarni to'ldiring",baddob:"Tug'ilgan sanani to'g'ri kiriting",badphone:"Telefon raqami noto'g'ri",net:"Tarmoq xatosi. Qayta urinib ko'ring",domain:"Bu sayt manzili Firebase'da ruxsat etilmagan (Authorized domains)",err:"Kirib bo'lmadi. Qayta urinib ko'ring",demo:"Demo rejim: Firebase hali sozlanmagan, hisob tanlash taqlid qilinadi va faqat shu brauzerda ishlaydi.",pick_t:'Hisobni tanlang',pick_other:'Boshqa Google hisob (email)',next:'Davom etish',cancel:'Bekor qilish',bademail:"Email noto'g'ri"},
+    ru:{welcome_t:'Добро пожаловать!',welcome_p:'',start_t:'Вход',start_p:'',google:'Продолжить с Google',need_google:'',or:'или',dupphone:'Этот номер телефона уже зарегистрирован на другом аккаунте. Введите другой номер',regfail:'Не удалось завершить регистрацию. Проверьте интернет и попробуйте ещё раз',guest:'Продолжить как гость',guest_note:'',info_t:'Личные данные',info_p:'Заполните данные, чтобы завершить регистрацию.','switch':'Другой аккаунт',enter:'Войти на сайт',name:'Имя',surname:'Фамилия',school:'Школа',klass:'Класс (9-A)',dob_l:'Дата рождения',dob_t:'Дата рождения *',dob_h:'Выберите день, месяц и год (например: 12.03.2010)',phone:'Номер телефона',fill:'Заполните все поля (*)',baddob:'Введите корректную дату рождения',badphone:'Неверный номер телефона',net:'Ошибка сети. Попробуйте ещё раз',domain:'Адрес сайта не добавлен в Authorized domains Firebase',err:'Не удалось войти. Попробуйте ещё раз',demo:'Демо-режим: Firebase ещё не настроен, выбор аккаунта имитируется и работает только в этом браузере.',pick_t:'Выберите аккаунт',pick_other:'Другой аккаунт Google (email)',next:'Далее',cancel:'Отмена',bademail:'Неверный email'},
+    en:{welcome_t:'Welcome!',welcome_p:'',start_t:'Sign in',start_p:'',google:'Continue with Google',need_google:'',or:'or',dupphone:'This phone number is already registered to another account. Enter a different number',regfail:'Registration failed. Check your connection and try again',guest:'Continue as guest',guest_note:'',info_t:'Personal information',info_p:'Fill in your details to finish registration.','switch':'Use another account',enter:'Enter the site',name:'First name',surname:'Surname',school:'School',klass:'Class (9-A)',dob_l:'Date of birth',dob_t:'Date of birth *',dob_h:'Pick day, month and year (e.g. 12.03.2010)',phone:'Phone number',fill:'Please fill in all (*) fields',baddob:'Enter a valid date of birth',badphone:'Invalid phone number',net:'Network error. Please try again',domain:'This site address is not in Firebase Authorized domains',err:'Could not sign in. Please try again',demo:'Demo mode: Firebase is not set up yet, account choosing is simulated and only works in this browser.',pick_t:'Choose an account',pick_other:'Another Google account (email)',next:'Next',cancel:'Cancel',bademail:'Invalid email'},
+    kk:{welcome_t:'Қош келдіңіз!',welcome_p:'',start_t:'Кіру',start_p:'',google:'Google арқылы жалғастыру',need_google:'',or:'немесе',dupphone:'Бұл телефон нөмірі басқа аккаунтта тіркелген. Басқа нөмір енгізіңіз',regfail:'Тіркелу мүмкін болмады. Интернетті тексеріп, қайталап көріңіз',guest:'Қонақ ретінде жалғастыру',guest_note:'',info_t:'Жеке деректер',info_p:'Тіркеуді аяқтау үшін деректеріңізді толтырыңыз.','switch':'Басқа аккаунт',enter:'Сайтқа кіру',name:'Аты',surname:'Тегі',school:'Мектеп',klass:'Сынып (9-A)',dob_l:'Туған күні',dob_t:'Туған күні *',dob_h:'Күнін, айын және жылын таңдаңыз (мысалы: 12.03.2010)',phone:'Телефон нөмірі',fill:'Барлық (*) өрістерді толтырыңыз',baddob:'Туған күнді дұрыс енгізіңіз',badphone:'Телефон нөмірі қате',net:'Желі қатесі. Қайталап көріңіз',domain:'Бұл сайт мекенжайы Firebase-тің рұқсат етілген домендер (Authorized domains) тізіміне қосылмаған',err:'Кіру мүмкін болмады. Қайталап көріңіз',demo:'Демо режим: Firebase әлі бапталмаған, аккаунт таңдау тек көрсетілім үшін және тек осы браузерде жұмыс істейді.',pick_t:'Аккаунтты таңдаңыз',pick_other:'Басқа Google аккаунты (email)',next:'Әрі қарай',cancel:'Бас тарту',bademail:'Email қате'}
   };
   var S=G.uz, gate=$('#gate'), cur=null;
   /* Guest mode: browse only (no applying, no own profile/rating, never admin). Lives for this tab only. */
@@ -1025,6 +1100,23 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
   var guestMode=false; try{ guestMode=sessionStorage.getItem('myschool-guest')==='1'; }catch(e){}
   function enterGuest(){ cur=null; root.classList.add('authed'); gate.hidden=true; }
   function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+
+  /* ---- v2: fixed class list + school dropdown (no free typing => no messy data) ---- */
+  var KLASS_LIST=[]; [5,6,7,8,9,10,11].forEach(function(g){ ['A','B'].forEach(function(l){ KLASS_LIST.push(g+'-'+l); }); });
+  var DEFAULT_SCHOOLS=['33-maktab'], SCHOOL_LIST=DEFAULT_SCHOOLS.slice();
+  function fillGateSelects(){
+    var s=$('#uSchool'), k=$('#uKlass'); if(!s||!k) return;
+    var cs=s.value, ck=k.value;
+    s.innerHTML='<option value="">'+esc(S.school)+' *</option>'+SCHOOL_LIST.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join('');
+    k.innerHTML='<option value="">'+esc(S.klass)+' *</option>'+KLASS_LIST.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join('');
+    if(cs&&SCHOOL_LIST.indexOf(cs)>-1) s.value=cs; else if(SCHOOL_LIST.length===1) s.value=SCHOOL_LIST[0];
+    if(ck) k.value=ck;
+  }
+  try{ if(cfg.dbUrl){ fetch(String(cfg.dbUrl).replace(/\/$/,'')+'/siteContent/schools.json').then(function(r){ return r.ok?r.json():null; }).then(function(d){
+    var a=Array.isArray(d)?d:(d&&typeof d==='object'?Object.keys(d).map(function(k){return d[k]}):[]);
+    a=a.filter(function(x){ return typeof x==='string'&&x.trim(); });
+    if(a.length){ SCHOOL_LIST=a; fillGateSelects(); }
+  }).catch(function(){}); } }catch(e){}
   function msg(id,t){ var m=$('#'+id); if(m) m.textContent=t||''; }
   function closeGl(){ $('#gLangMenu').hidden=true; $('#gLangBtn').setAttribute('aria-expanded','false'); }
   function applyGate(){
@@ -1036,6 +1128,7 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     $('#gLangFlag').innerHTML=FL[lang]||''; $('#gLangCode').textContent=c[2];
     $('#gLangMenu').innerHTML=LANGS.map(function(x){ return '<li><button type="button" data-gl="'+x[0]+'"'+(x[0]===lang?' aria-current="true"':'')+'>'+(FL[x[0]]||'')+'<span>'+x[1]+'</span></button></li>'; }).join('');
     var dm=$('#gDemo'); dm.hidden=!demo; if(demo) dm.textContent=S.demo;
+    fillGateSelects();
     root.lang=lang;
   }
   window.__gateLang=function(l){ if(G[l]){ lang=l; applyGate(); } };
@@ -1053,7 +1146,7 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
   function fillInfo(u){
     var dn=(u.displayName||'').trim(), parts=dn?dn.split(/\s+/):[], em=u.email||'';
     $('#uName').value=parts[0]||''; $('#uSur').value=parts.slice(1).join(' ');
-    ['#uSchool','#uKlass','#uDob','#uPhone'].forEach(function(k){ $(k).value=''; });
+    ['#uSchool','#uKlass','#uDob','#uPhone'].forEach(function(k){ $(k).value=''; }); fillGateSelects();
     $('#gAccName').textContent=dn||em; $('#gAccMail').textContent=dn?em:'';
     $('#gAccAv').textContent=(dn||em||'?').charAt(0).toUpperCase(); msg('gMsg2','');
   }
@@ -1235,7 +1328,7 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     ev.preventDefault(); if(!cur) return;
     var v=function(id){ return $(id).value.trim().replace(/\s+/g,' '); };
     var d={name:v('#uName'),surname:v('#uSur'),school:v('#uSchool'),klass:v('#uKlass'),dob:$('#uDob').value,phone:v('#uPhone')};
-    if(!d.name||!d.surname||!d.school||!d.klass||!d.dob||!d.phone){ msg('gMsg2',S.fill); return; }
+    if(!d.name||!d.surname||!d.school||!d.klass||!d.dob||!d.phone||KLASS_LIST.indexOf(d.klass)<0||SCHOOL_LIST.indexOf(d.school)<0){ msg('gMsg2',S.fill); return; }
     var dt=new Date(d.dob); if(isNaN(dt)||dt>new Date()||dt.getFullYear()<1980){ msg('gMsg2',S.baddob); return; }
     var ph9=window.uzPhone(d.phone); if(!ph9){ msg('gMsg2',S.badphone); $('#uPhone').setAttribute('aria-invalid','true'); return; } d.phone=window.fmtPhone(ph9);
     var p={done:true,name:d.name+' '+d.surname,klass:d.klass,school:d.school,dob:d.dob.split('-').reverse().join('.'),phone:d.phone,email:cur.email||'',photo:''};
@@ -1717,7 +1810,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     });
     closeNotes(); closeLang(); closeUser(); curView=id;
     if(id==='bellashuvlar'||id==='tashabbuslar') refreshApps();
-    if(id==='arizalar') renderApps();
+    if(id==='arizalar'){ apSel=''; apFil='all'; renderApps(); }
     window.scrollTo(0,0);
   }
   function go(id){
@@ -1929,7 +2022,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     a.forEach(function(x,i){ x.r=(i&&x.sc===a[i-1].sc)?a[i-1].r:i+1; });
     return a;
   }
-  function sameCls(a,b){ return normName(a)===normName(b); }
+  function sameCls(a,b){ return normKlass(a)===normKlass(b); }
   function myK(){ return (GUEST||isAdmin)?'':profile.klass; }
   function findMe(students){
     if(GUEST||isAdmin) return null;
@@ -2087,13 +2180,32 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   });
 
 /* ---------- Profile ---------- */
+
+  /* ---- v2: class normalising + dropdown helpers (display/matching only; stored data is never rewritten) ---- */
+  var KLASS_LIST=[]; [5,6,7,8,9,10,11].forEach(function(g){ ['A','B'].forEach(function(l){ KLASS_LIST.push(g+'-'+l); }); });
+  var DEFAULT_SCHOOLS=['33-maktab'];
+  function schoolList(){ var s=(store&&store.schools)||[]; return s.length?s:DEFAULT_SCHOOLS; }
+  function normKlass(t){
+    var s=String(t||'').toUpperCase().replace(/\u0410/g,'A').replace(/\u0412/g,'B').replace(/\u0411/g,'B').replace(/SINF|\u041A\u041B\u0410\u0421\u0421|CLASS/g,'').replace(/[\s\-_.:,\u2013\u2014]+/g,'');
+    var m=/^(\d{1,2})([A-Z])$/.exec(s); return m?m[1]+'-'+m[2]:String(t||'').trim();
+  }
+  function fillSel(sel,list,curVal){
+    var opts=list.slice(); if(curVal&&opts.indexOf(curVal)<0) opts.push(curVal);
+    sel.innerHTML=opts.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join('');
+    sel.value=curVal||'';
+  }
+  function fillProfileSelects(){
+    var kv=profile.klass, nk=normKlass(kv); if(KLASS_LIST.indexOf(nk)>-1) kv=nk;
+    fillSel($('#in-klass'),KLASS_LIST,kv); fillSel($('#in-school'),schoolList(),profile.school);
+  }
   var KEYS=['name','klass','school','dob','phone'], pendPhoto=null;
   function dobToIso(s){ var m=/^(\d{2})\.(\d{2})\.(\d{4})$/.exec(s||''); return m?m[3]+'-'+m[2]+'-'+m[1]:''; }
   function avHtml(u){ return u?'<img src="'+u+'" alt="">':ic('user'); }
   function showAvatars(u){ $('#pfAv').innerHTML=avHtml(u); $('#avIc').innerHTML=avHtml(u); $('#pfPhotoRm').hidden=!u; }
   function fillProfile(){
     $$('[data-pf]').forEach(function(el){ var v=profile[el.getAttribute('data-pf')]; el.textContent=(v==='Foydalanuvchi'||v==='Mehmon'||v==='1-son maktab')?tr(v):(v||'—'); });
-    KEYS.forEach(function(k){ $('#in-'+k).value=k==='dob'?dobToIso(profile.dob):profile[k]; });
+    fillProfileSelects();
+    KEYS.forEach(function(k){ if(k==='klass'||k==='school') return; $('#in-'+k).value=k==='dob'?dobToIso(profile.dob):profile[k]; });
     showAvatars(pendPhoto!==null?pendPhoto:profile.photo);
   }
   function setEditing(on){
@@ -2200,10 +2312,11 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     ['uz','ru','en','kk'].forEach(function(l){ var v=o[l]; if(v&&typeof v==='object'){ var c={a:String(v.a||'').slice(0,80),b:String(v.b||'').slice(0,80),p:String(v.p||'').slice(0,160)}; if(c.a||c.b||c.p) r[l]=c; } });
     return r;
   }
+  function cleanSchools(a){ var seen={}, out=[]; normArr(a).forEach(function(x){ if(typeof x!=='string') return; x=x.trim().replace(/\s+/g,' ').slice(0,40); if(x&&!seen[x.toLowerCase()]){ seen[x.toLowerCase()]=1; out.push(x); } }); return out.slice(0,30); }
   function cleanStore(d){
     if(Array.isArray(d)) d={news:d}; // older news.json held only news
     d=d||{};
-    return {news:cleanList(d.news,'news'),events:cleanList(d.events,'events'),inits:cleanList(d.inits,'inits'),classes:cleanClasses(d.classes),heroes:cleanHeroes(d),students:cleanStudents(d.students),pts:cleanPts(d.pts),faq:cleanFaq(d.faq),heroText:cleanHT(d.heroText)};
+    return {news:cleanList(d.news,'news'),events:cleanList(d.events,'events'),inits:cleanList(d.inits,'inits'),classes:cleanClasses(d.classes),heroes:cleanHeroes(d),students:cleanStudents(d.students),pts:cleanPts(d.pts),faq:cleanFaq(d.faq),heroText:cleanHT(d.heroText),schools:cleanSchools(d.schools)};
   }
   try{ var lp=localStorage.getItem('myschool-posts'); if(lp!==null){ store=cleanStore(JSON.parse(lp)); hasLocal=true; } }catch(e){}
   function savePosts(){
@@ -2262,6 +2375,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     }).join('');
   }
   function renderAdmin(){
+    if(cur==='schools') return renderSchoolsEditor();
     if(cur==='faq') return renderFaqEditor();
     if(cur==='users') return renderUsers();
     if(cur==='rating') return renderRatingEditor();
@@ -2273,6 +2387,22 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
         '<div class="act"><button type="button" class="pill" data-aedit="'+p.id+'">Tahrirlash</button><button type="button" class="pill" data-adel="'+p.id+'">O\'chirish</button></div></div>';
     }).join(''):'<p class="card empty">Hali hech narsa qo\'shmadingiz.</p>';
   }
+  function renderSchoolsEditor(){
+    var l=$('#aList'), arr=schoolList();
+    l.innerHTML='<div class="card adm"><label>Yangi maktab nomi<input class="field" id="scNew" maxlength="40" autocomplete="off" placeholder="Masalan: 12-maktab"></label><div class="adm-btns"><button type="button" class="btn" id="scAdd">Qo\'shish</button></div><p class="hint">Ro\'yxatdan o\'tishda va profilda foydalanuvchilar faqat shu maktablardan birini tanlaydi. Avval ro\'yxatdan o\'tganlarning ma\'lumoti o\'zgarmaydi.</p></div>'+
+      arr.map(function(s,i){ return '<div class="card arow"><div><b>'+esc(s)+'</b></div><div class="act">'+(arr.length>1?'<button type="button" class="pill" data-scdel="'+i+'">O\'chirish</button>':'')+'</div></div>'; }).join('');
+  }
+  function schoolsChange(fn){
+    var prev=JSON.stringify(store), a=schoolList().slice(); a=fn(a); store.schools=cleanSchools(a);
+    if(!savePosts()){ store=JSON.parse(prev); toast("Saqlab bo'lmadi"); return; }
+    rebuildAll();
+  }
+  $('#aList').addEventListener('click',function(e){
+    if(cur!=='schools') return;
+    var ad=e.target.closest('#scAdd'), dl=e.target.closest('[data-scdel]');
+    if(ad){ var v=($('#scNew').value||'').trim(); if(!v){ toast('Maktab nomini yozing'); return; } schoolsChange(function(a){ a.push(v); return a; }); toast("Maktab qo'shildi"); }
+    else if(dl){ var i=+dl.getAttribute('data-scdel'); if(!confirm("Bu maktabni ro'yxatdan olib tashlaysizmi? Foydalanuvchilarning avvalgi ma'lumoti o'zgarmaydi.")) return; schoolsChange(function(a){ a.splice(i,1); return a; }); }
+  });
   function resetDraft(){
     draft={editId:null,imgs:[]};
     ['#aTitle','#aText','#aMore','#aDate','#aLink'].forEach(function(k){ $(k).value=''; });
@@ -2283,6 +2413,11 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       $('#aForm').hidden=true; $('#aListTitle').textContent='Bosh sahifa rasmi';
       $$('#aTabs button').forEach(function(b){ b.setAttribute('aria-pressed',String(b.getAttribute('data-atype')===cur)); });
       renderHeroEditor(); return;
+    }
+    if(cur==='schools'){
+      $('#aForm').hidden=true; $('#aListTitle').textContent='Maktablar';
+      $$('#aTabs button').forEach(function(b){ b.setAttribute('aria-pressed',String(b.getAttribute('data-atype')===cur)); });
+      renderSchoolsEditor(); return;
     }
     if(cur==='faq'){
       $('#aForm').hidden=true; $('#aListTitle').textContent='Savollar';
@@ -2374,7 +2509,6 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       if(!confirm("Buni o'chirasizmi?")) return;
       var id=dl.getAttribute('data-adel');
       store[cur]=store[cur].filter(function(x){return x.id!==id}); savePosts();
-      if(cur==='events'||cur==='inits'){ var eid=(cur==='inits'?'pt':'pe')+id; DB.list().then(function(arr){ arr.filter(function(a){return a.evId===eid}).forEach(function(a){ DB.remove(a.id).catch(function(){}); }); }).catch(function(){}); }
       if(draft.editId===id) resetDraft();
       rebuildAll(); toast("O'chirildi");
     }
@@ -2395,7 +2529,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
      Everyone reads it; only the admin Google account may write it (see the Realtime Database rules). ---------- */
   function normArr(v){ if(Array.isArray(v)) return v; if(v&&typeof v==='object') return Object.keys(v).sort(function(a,b){return a-b}).map(function(k){return v[k]}); return []; }
   function fromRemote(d){
-    var o={news:normArr(d.news),events:normArr(d.events),inits:normArr(d.inits),classes:d.classes?normArr(d.classes):null,heroes:normArr(d.heroes),students:normArr(d.students),pts:normArr(d.pts),faq:d.faq?normArr(d.faq):null,heroText:(d.heroText&&typeof d.heroText==='object')?d.heroText:{}};
+    var o={news:normArr(d.news),events:normArr(d.events),inits:normArr(d.inits),classes:d.classes?normArr(d.classes):null,heroes:normArr(d.heroes),students:normArr(d.students),pts:normArr(d.pts),faq:d.faq?normArr(d.faq):null,heroText:(d.heroText&&typeof d.heroText==='object')?d.heroText:{},schools:d.schools?normArr(d.schools):[]};
     ['news','events','inits'].forEach(function(k){ o[k].forEach(function(x){ if(x&&typeof x==='object'&&x.imgs) x.imgs=normArr(x.imgs); }); });
     return o;
   }
@@ -2476,12 +2610,17 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       });
   }
   function appNotes(){ renderNotes(); }
+  var apAll=[], apSel='', apFil='all';
   $('#apList').addEventListener('click',function(e){
-    var st=e.target.closest('[data-aset]'), lg=e.target.closest('[data-alogin]');
-    if(lg){ renderApps(); return; }
-    if(st){
-      DB.set(st.getAttribute('data-aid'),st.getAttribute('data-aset')).then(function(){ toast('Saqlandi'); renderApps(); })
-        .catch(function(){ token=''; toast("Saqlab bo'lmadi. Qayta kiring."); renderApps(); });
+    var t;
+    if(e.target.closest('[data-alogin]')){ renderApps(); return; }
+    if((t=e.target.closest('[data-agrp]'))){ apSel=t.getAttribute('data-agrp'); apFil='all'; drawApps(); try{ window.scrollTo(0,0); }catch(x){} return; }
+    if(e.target.closest('[data-aback]')){ apSel=''; drawApps(); return; }
+    if((t=e.target.closest('[data-afil]'))){ apFil=t.getAttribute('data-afil'); drawApps(); return; }
+    if((t=e.target.closest('[data-aset]'))){
+      var id=t.getAttribute('data-aid'), stt=t.getAttribute('data-aset'); t.disabled=true;
+      DB.set(id,stt).then(function(){ apAll.forEach(function(a){ if(a.id===id) a.status=stt; }); toast('Saqlandi'); drawApps(); })
+        .catch(function(){ token=''; toast("Saqlab bo'lmadi. Qayta kiring."); t.disabled=false; });
     }
   });
   function closeAp(){ $('#apModal').hidden=true; }
@@ -2501,7 +2640,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(GUEST||isAdmin){ guestBlock(isAdmin?'admin':'apply'); return; }
     apKind=kind; apEv=(kind==='init'?INITS:EVENTS).filter(function(x){return x.id===id})[0]; if(!apEv) return;
     $('#apEv').textContent=plain(apEv.title);
-    $('#apName').value=profile.name==='Foydalanuvchi'?'':profile.name; $('#apKlass').value=profile.klass; $('#apPhone').value=profile.phone||''; $('#apNote').value=''; ['#apName','#apKlass','#apPhone'].forEach(function(s){ $(s).readOnly=true; });
+    $('#apName').value=profile.name==='Foydalanuvchi'?'':profile.name; $('#apKlass').value=normKlass(profile.klass); $('#apPhone').value=profile.phone||''; $('#apNote').value=''; ['#apName','#apKlass','#apPhone'].forEach(function(s){ $(s).readOnly=true; });
     $('#apModal').hidden=false; $('#apNote').focus();
   }
   $('#evBox').addEventListener('click',function(e){ var b=e.target.closest('[data-apply]'); if(b) openApply('event',b.getAttribute('data-apply')); });
@@ -2511,7 +2650,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAp(); });
   $('#apSend').addEventListener('click',function(){
     if(GUEST||isAdmin){ closeAp(); guestBlock(isAdmin?'admin':'apply'); return; }
-    var n=$('#apName').value.trim(), k=$('#apKlass').value.trim(), ph=$('#apPhone').value.trim(), btn=this;
+    var n=$('#apName').value.trim(), k=normKlass($('#apKlass').value.trim()), ph=$('#apPhone').value.trim(), btn=this;
     if(!n||!k||!window.uzPhone(ph)){ toast(tr("Ism, sinf va telefonni to'g'ri yozing")); return; } ph=window.fmtPhone(window.uzPhone(ph));
     var a={id:rid(),kind:apKind,evId:apEv.id,evTitle:plain(apEv.title),name:n,klass:k,phone:ph,note:$('#apNote').value.trim(),status:'pending',ts:Date.now()};
     btn.disabled=true;
@@ -2520,19 +2659,52 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       closeAp(); renderEvents(); renderInits(); toast(tr('Ariza yuborildi. Admin tasdiqlashini kuting.'));
     }).catch(function(){ toast(tr("Yuborib bo'lmadi. Keyinroq urinib ko'ring.")); }).then(function(){ btn.disabled=false; });
   });
+  function apKey(k,id){ return (k==='init'?'init':'event')+'|'+id; }
+  function apCnt(a){ var c={p:0,a:0,r:0}; a.forEach(function(x){ if(x.status==='approved') c.a++; else if(x.status==='rejected') c.r++; else c.p++; }); return c; }
+  function apGroups(){
+    var g=[], idx={};
+    function add(kind,id,title,arch){ var k=apKey(kind,id), o={key:k,kind:kind==='init'?'init':'event',id:id,title:title,arch:!!arch,apps:[]}; idx[k]=o; g.push(o); return o; }
+    EVENTS.forEach(function(e){ add('event',e.id,plain(e.title),false); });
+    INITS.forEach(function(e){ add('init',e.id,plain(e.title),false); });
+    apAll.forEach(function(a){ var o=idx[apKey(a.kind,a.evId)]||add(a.kind,a.evId,a.evTitle||'—',contentLoaded); o.apps.push(a); });
+    return g;
+  }
+  function apRow(a){
+    var ok=a.status!=='approved', no=a.status!=='rejected', st=STAT[a.status]?a.status:'pending';
+    return '<div class="card arow"><div><b>'+esc(a.name)+'<span class="ap-kl">'+esc(normKlass(a.klass))+'</span></b><span class="date">Tel: '+esc(a.phone||'—')+'</span>'+(a.note?'<span class="date">'+esc(a.note)+'</span>':'')+
+      '<span class="stat '+st+'">'+STAT[st]+'</span></div><div class="act">'+
+      (ok?'<button type="button" class="pill solid" data-aset="approved" data-aid="'+esc(a.id)+'">Tasdiqlash</button>':'')+
+      (no?'<button type="button" class="pill" data-aset="rejected" data-aid="'+esc(a.id)+'">Rad etish</button>':'')+'</div></div>';
+  }
+  function apCard(g){
+    var c=apCnt(g.apps);
+    return '<button type="button" class="card ap-grp" data-agrp="'+esc(g.key)+'"><span><b>'+esc(g.title)+'</b><span class="date">Tasdiqlandi: '+c.a+' · Rad etildi: '+c.r+'</span></span><span class="ap-badges">'+(c.p?'<span class="stat pending">'+c.p+' kutilmoqda</span>':'')+'<span class="ap-n" title="Jami arizalar">'+g.apps.length+'</span></span></button>';
+  }
+  function apNote(){ return FB.url?'':'<p class="hint">Demo rejim: arizalar faqat shu brauzerda saqlanadi.</p>'; }
+  function drawApps(){
+    var l=$('#apList'), groups=apGroups(), sel=null;
+    groups.forEach(function(g){ if(g.key===apSel) sel=g; });
+    if(sel){
+      var c=apCnt(sel.apps), list=sel.apps.filter(function(a){ return apFil==='all'||(apFil==='pending'?(a.status!=='approved'&&a.status!=='rejected'):a.status===apFil); });
+      list.sort(function(x,y){ var kx=normKlass(x.klass), ky=normKlass(y.klass); return kx===ky?String(x.name||'').localeCompare(String(y.name||'')):(parseInt(kx)||0)-(parseInt(ky)||0)||kx.localeCompare(ky); });
+      var tabs=[['all','Hammasi ('+sel.apps.length+')'],['pending','Kutilmoqda ('+c.p+')'],['approved','Tasdiqlangan ('+c.a+')'],['rejected','Rad etilgan ('+c.r+')']];
+      l.innerHTML=apNote()+'<div class="ap-top"><button type="button" class="btn ghost small" data-aback>&larr; Barcha ro\'yxat</button></div>'+
+        '<div><h2 class="sub" style="margin:6px 0 2px">'+esc(sel.title)+'</h2><p class="ap-sum">'+(sel.kind==='init'?'Tashabbus':'Bellashuv')+(sel.arch?' · o\'chirilgan (arxiv)':'')+' · jami '+sel.apps.length+' ariza</p></div>'+
+        '<div class="tabs-f" role="group" aria-label="Holat">'+tabs.map(function(x){ return '<button type="button" data-afil="'+x[0]+'" aria-pressed="'+(apFil===x[0])+'">'+esc(x[1])+'</button>'; }).join('')+'</div>'+
+        (list.length?list.map(apRow).join(''):'<p class="card empty">'+(sel.apps.length?'Bu holatda ariza yo\'q.':'Bu yerga hali ariza topshirilmagan.')+'</p>');
+      return;
+    }
+    var tot=apAll.length, pend=apCnt(apAll).p;
+    function sec(title,arr){ if(!arr.length) return ''; arr.sort(function(a,b){ return apCnt(b.apps).p-apCnt(a.apps).p||b.apps.length-a.apps.length; }); return '<h2 class="sub" style="margin:10px 0 0">'+title+'</h2>'+arr.map(apCard).join(''); }
+    var ev=groups.filter(function(g){return !g.arch&&g.kind==='event'}), it=groups.filter(function(g){return !g.arch&&g.kind==='init'}), ar=groups.filter(function(g){return g.arch});
+    l.innerHTML=apNote()+'<p class="ap-sum">Jami '+tot+' ariza'+(pend?' · '+pend+' tasi javob kutmoqda':'')+'</p>'+
+      ((ev.length||it.length||ar.length)?(sec('Bellashuvlar',ev)+sec('Tashabbuslar',it)+sec('Arxiv (o\'chirilgan e\'lonlar)',ar)):'<p class="card empty">Hali bellashuv yoki tashabbus joylanmagan.</p>');
+  }
   function renderApps(){
-    var l=$('#apList'), note=FB.url?'':'<p class="hint">Demo rejim: arizalar faqat shu brauzerda saqlanadi.</p>';
-    l.innerHTML=note+'<p class="card empty">Yuklanmoqda...</p>';
-    DB.list().then(function(arr){
-      arr=arr.filter(function(a){return !contentLoaded||exists(a.kind,a.evId)}); arr.sort(byNew);
-      l.innerHTML=note+(arr.length?arr.map(function(a){
-        var ok=a.status!=='approved', no=a.status!=='rejected';
-        return '<div class="card arow"><div><b>'+esc(a.name)+' · '+esc(a.klass)+'</b><span class="date">'+(a.kind==='init'?'Tashabbus: ':'Bellashuv: ')+esc(a.evTitle)+'</span><span class="date">Tel: '+esc(a.phone)+'</span>'+(a.note?'<span class="date">'+esc(a.note)+'</span>':'')+
-          '<span class="stat '+esc(a.status)+'">'+(STAT[a.status]||STAT.pending)+'</span></div><div class="act">'+
-          (ok?'<button type="button" class="pill solid" data-aset="approved" data-aid="'+esc(a.id)+'">Tasdiqlash</button>':'')+
-          (no?'<button type="button" class="pill" data-aset="rejected" data-aid="'+esc(a.id)+'">Rad etish</button>':'')+'</div></div>';
-      }).join(''):'<p class="card empty">Hali ariza yo\'q.</p>');
-    }).catch(function(){ token=''; l.innerHTML=note+'<p class="card empty">Arizalarni yuklab bo\'lmadi. Firebase qoidalarini tekshiring.</p><div class="adm-btns"><button type="button" class="btn small" data-alogin>Qayta urinish</button></div>'; });
+    var l=$('#apList');
+    l.innerHTML=apNote()+'<p class="card empty">Yuklanmoqda...</p>';
+    DB.list().then(function(arr){ apAll=arr.filter(function(a){ return a&&a.evId; }); drawApps(); })
+      .catch(function(){ token=''; l.innerHTML=apNote()+'<p class="card empty">Arizalarni yuklab bo\'lmadi. Firebase qoidalarini tekshiring.</p><div class="adm-btns"><button type="button" class="btn small" data-alogin>Qayta urinish</button></div>'; });
   }
 
 /* ---------- Admin: rating (students + classes, points log) ---------- */
@@ -2634,7 +2806,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     }
     if(ra){
       var ru=ruList[+ra.getAttribute('data-ruadd')]; if(!ru) return;
-      var rn=String(ru.klass||'').replace(/\s+/g,'').toUpperCase().slice(0,6); if(!rn){ toast('Sinf ko\'rsatilmagan'); return; }
+      var rn=normKlass(ru.klass).slice(0,6); if(!rn){ toast('Sinf ko\'rsatilmagan'); return; }
       var rex=CLASSES.filter(function(c){return sameCls(c.n,rn)})[0]; if(rex) rn=rex.n;
       rmut(function(){ if(!rex) rosterEdit().push({n:rn,g:parseInt(rn)||0}); store.students.push({id:uid(),name:ru.name.slice(0,40),n:rn}); },ru.name+': Reytingga qo\'shildi'); return;
     }
