@@ -729,6 +729,13 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
           <p class="g-sub" data-g="start_p"></p>
           <button type="button" class="g-google" id="gGoogle"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span data-g="google"></span></button>
           <p class="g-note" data-g="need_google"></p>
+          <div class="g-or"><span data-g="or_email"></span></div>
+          <form id="fEmail" novalidate>
+            <input type="email" id="eMail" data-gph="email" autocomplete="email" inputmode="email" maxlength="120">
+            <input type="password" id="ePass" data-gph="password" autocomplete="current-password" maxlength="60">
+            <button type="submit" class="g-primary" id="gEmailIn" data-g="signin"></button>
+            <div class="g-row" style="justify-content:space-between;margin-top:6px"><button type="button" class="g-text" id="gEmailUp" data-g="signup"></button><button type="button" class="g-text" id="gReset" data-g="forgot"></button></div>
+          </form>
           <div class="g-or"><span data-g="or"></span></div>
           <button type="button" class="g-guest" id="gGuest" data-g="guest"></button>
           <p class="g-note" data-g="guest_note"></p>
@@ -1107,11 +1114,18 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     en:{welcome_t:'Welcome!',welcome_p:'',start_t:'Sign in',start_p:'',google:'Continue with Google',need_google:'',or:'or',dupphone:'This phone number is already registered to another account. Enter a different number',regfail:'Registration failed. Check your connection and try again',guest:'Continue as guest',guest_note:'',info_t:'Personal information',info_p:'Fill in your details to finish registration.','switch':'Use another account',enter:'Enter the site',name:'First name',surname:'Surname',school:'School',klass:'Class (9-A)',dob_l:'Date of birth',dob_t:'Date of birth *',dob_h:'Pick day, month and year (e.g. 12.03.2010)',phone:'Phone number',fill:'Please fill in all (*) fields',baddob:'Enter a valid date of birth',badphone:'Invalid phone number',net:'Network error. Please try again',domain:'This site address is not in Firebase Authorized domains',err:'Could not sign in. Please try again',demo:'Demo mode: Firebase is not set up yet, account choosing is simulated and only works in this browser.',pick_t:'Choose an account',pick_other:'Another Google account (email)',next:'Next',cancel:'Cancel',bademail:'Invalid email'},
     kk:{welcome_t:'Қош келдіңіз!',welcome_p:'',start_t:'Кіру',start_p:'',google:'Google арқылы жалғастыру',need_google:'',or:'немесе',dupphone:'Бұл телефон нөмірі басқа аккаунтта тіркелген. Басқа нөмір енгізіңіз',regfail:'Тіркелу мүмкін болмады. Интернетті тексеріп, қайталап көріңіз',guest:'Қонақ ретінде жалғастыру',guest_note:'',info_t:'Жеке деректер',info_p:'Тіркеуді аяқтау үшін деректеріңізді толтырыңыз.','switch':'Басқа аккаунт',enter:'Сайтқа кіру',name:'Аты',surname:'Тегі',school:'Мектеп',klass:'Сынып (9-A)',dob_l:'Туған күні',dob_t:'Туған күні *',dob_h:'Күнін, айын және жылын таңдаңыз (мысалы: 12.03.2010)',phone:'Телефон нөмірі',fill:'Барлық (*) өрістерді толтырыңыз',baddob:'Туған күнді дұрыс енгізіңіз',badphone:'Телефон нөмірі қате',net:'Желі қатесі. Қайталап көріңіз',domain:'Бұл сайт мекенжайы Firebase-тің рұқсат етілген домендер (Authorized domains) тізіміне қосылмаған',err:'Кіру мүмкін болмады. Қайталап көріңіз',demo:'Демо режим: Firebase әлі бапталмаған, аккаунт таңдау тек көрсетілім үшін және тек осы браузерде жұмыс істейді.',pick_t:'Аккаунтты таңдаңыз',pick_other:'Басқа Google аккаунты (email)',next:'Әрі қарай',cancel:'Бас тарту',bademail:'Email қате'}
   };
+  var GX={
+    uz:{or_email:'yoki email orqali',email:'Email',password:'Parol (kamida 6 belgi)',signin:'Kirish',signup:"Ro'yxatdan o'tish",forgot:'Parolni unutdingizmi?',wrongcred:"Email yoki parol noto'g'ri",emailinuse:"Bu email allaqachon ro'yxatdan o'tgan. «Kirish» tugmasini bosing",weakpw:"Parol juda qisqa (kamida 6 belgi)",needboth:'Email va parolni kiriting',resetsent:"Parolni tiklash xati yuborildi. Pochtangizni tekshiring",resetneed:'Avval email manzilingizni yozing'},
+    ru:{or_email:'или через email',email:'Email',password:'Пароль (минимум 6 символов)',signin:'Войти',signup:'Регистрация',forgot:'Забыли пароль?',wrongcred:'Неверный email или пароль',emailinuse:'Этот email уже зарегистрирован. Нажмите «Войти»',weakpw:'Слишком короткий пароль (минимум 6 символов)',needboth:'Введите email и пароль',resetsent:'Письмо для сброса пароля отправлено. Проверьте почту',resetneed:'Сначала введите свой email'},
+    en:{or_email:'or with email',email:'Email',password:'Password (at least 6 characters)',signin:'Sign in',signup:'Sign up',forgot:'Forgot password?',wrongcred:'Wrong email or password',emailinuse:'This email is already registered. Press “Sign in”',weakpw:'Password is too short (at least 6 characters)',needboth:'Enter your email and password',resetsent:'Password reset email sent. Check your inbox',resetneed:'Enter your email first'},
+    kk:{or_email:'немесе email арқылы',email:'Email',password:'Құпия сөз (кемінде 6 таңба)',signin:'Кіру',signup:'Тіркелу',forgot:'Құпия сөзді ұмыттыңыз ба?',wrongcred:'Email немесе құпия сөз қате',emailinuse:'Бұл email тіркелген. «Кіру» түймесін басыңыз',weakpw:'Құпия сөз тым қысқа (кемінде 6 таңба)',needboth:'Email мен құпия сөзді енгізіңіз',resetsent:'Құпия сөзді қалпына келтіру хаты жіберілді. Поштаңызды тексеріңіз',resetneed:'Алдымен email жазыңыз'}
+  };
+  Object.keys(GX).forEach(function(l){ Object.assign(G[l],GX[l]); });
   var S=G.uz, gate=$('#gate'), cur=null;
   /* Guest mode: browse only (no applying, no own profile/rating, never admin). Lives for this tab only. */
   /* The ONE admin account. Change it here AND in the Firebase Realtime Database rules (the rules are the real protection). */
   var ADMIN_EMAIL='myschool33.project@gmail.com';
-  function isAdminUser(u){ return !demo&&!!u&&String(u.email||'').trim().toLowerCase()===ADMIN_EMAIL; }
+  function isAdminUser(u){ return !demo&&!!u&&u.emailVerified!==false&&String(u.email||'').trim().toLowerCase()===ADMIN_EMAIL; }
   function setAdmin(v){ window.__msAdminFlag=!!v; if(window.__msSetAdmin) window.__msSetAdmin(!!v); }
   var guestMode=false; try{ guestMode=sessionStorage.getItem('myschool-guest')==='1'; }catch(e){}
   function enterGuest(){ cur=null; root.classList.add('authed'); gate.hidden=true; }
@@ -1284,12 +1298,14 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
       ready:init,
       google:function(){ var p=new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({prompt:'select_account'});
         return fb.signInWithPopup(p).catch(function(e){ if(e&&e.code==='auth/popup-blocked'){ try{ sessionStorage.setItem('myschool-redir','1'); }catch(x){} return fb.signInWithRedirect(p); } throw e; }); },
+      email:function(mode,em,pw){ return mode==='up'?fb.createUserWithEmailAndPassword(em,pw):fb.signInWithEmailAndPassword(em,pw); },
+      reset:function(em){ return fb.sendPasswordResetEmail(em); },
       out:function(){ return fb.signOut(); }
     };
     var tries=0, iv=setInterval(function(){ if(init()||++tries>40){ clearInterval(iv); if(!started&&!guestMode){ gate.hidden=false; } } },150);
     window.addEventListener('load',function(){ if(!init()&&!guestMode) gate.hidden=false; });
   }else{
-    A={ ready:function(){return true;}, google:function(){ openPick(); return Promise.resolve(); }, out:function(){ try{ localStorage.removeItem(DK); }catch(e){} return Promise.resolve(); } };
+    A={ ready:function(){return true;}, google:function(){ openPick(); return Promise.resolve(); }, email:function(m,em){ chooseDemo(em); return Promise.resolve(); }, reset:function(){ return Promise.resolve(); }, out:function(){ try{ localStorage.removeItem(DK); }catch(e){} return Promise.resolve(); } };
     var du=null; try{ du=JSON.parse(localStorage.getItem(DK)); }catch(e){}
     if(du&&!pass){ try{ localStorage.removeItem(DK); }catch(e){} du=null; }
     onUser(du);
@@ -1299,6 +1315,10 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     if(c==='auth/network-request-failed') return S.net;
     if(c==='auth/unauthorized-domain') return S.domain;
     if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request') return '';
+    if(c==='auth/invalid-credential'||c==='auth/user-not-found'||c==='auth/wrong-password'||c==='auth/invalid-login-credentials') return S.wrongcred;
+    if(c==='auth/email-already-in-use') return S.emailinuse;
+    if(c==='auth/weak-password') return S.weakpw;
+    if(c==='auth/invalid-email') return S.bademail;
     return S.err;
   }
   $('#gGoogle').addEventListener('click',function(){
@@ -1306,6 +1326,27 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     if(!A.ready()){ msg('gMsg1',S.net); return; }
     var b=this; b.disabled=true;
     A.google().then(function(){ b.disabled=false; }).catch(function(e){ b.disabled=false; msg('gMsg1',errText(e)); });
+  });
+
+  /* email + password sign-in (works on iPhones and for people without a Google account) */
+  function emailGo(mode){
+    msg('gMsg1','');
+    var em=$('#eMail').value.trim().toLowerCase(), pw=$('#ePass').value;
+    if(!em||!pw){ msg('gMsg1',S.needboth); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ msg('gMsg1',S.bademail); return; }
+    if(!A.ready()){ msg('gMsg1',S.net); return; }
+    var bs=[$('#gEmailIn'),$('#gEmailUp')]; bs.forEach(function(b){ b.disabled=true; });
+    Promise.resolve(A.email(mode,em,pw)).then(function(){ bs.forEach(function(b){ b.disabled=false; }); })
+      .catch(function(e){ bs.forEach(function(b){ b.disabled=false; }); msg('gMsg1',errText(e)); });
+  }
+  $('#fEmail').addEventListener('submit',function(ev){ ev.preventDefault(); emailGo('in'); });
+  $('#gEmailUp').addEventListener('click',function(){ emailGo('up'); });
+  $('#gReset').addEventListener('click',function(){
+    msg('gMsg1','');
+    var em=$('#eMail').value.trim().toLowerCase();
+    if(!em){ msg('gMsg1',S.resetneed); return; }
+    if(!A.ready()){ msg('gMsg1',S.net); return; }
+    Promise.resolve(A.reset(em)).then(function(){ msg('gMsg1',S.resetsent); }).catch(function(e){ msg('gMsg1',errText(e)); });
   });
 
   /* demo account chooser */
