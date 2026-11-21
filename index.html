@@ -692,6 +692,12 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
 #lbBox .lb-n.prev{left:max(12px,env(safe-area-inset-left,0px))}
 #lbBox .lb-n.next{right:max(12px,env(safe-area-inset-right,0px))}
 #lbBox .lb-c{position:fixed;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom,0px));text-align:center;color:#fff;font-weight:700;font-size:13px}
+
+/* News: every card the same size */
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:20px;align-items:start}
+.news-grid .feat-art .art{aspect-ratio:16/9}
+.news-grid .feat-body h2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.36em}
+.news-grid .feat-body p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:4.5em}
 </style>
 
 
@@ -1954,12 +1960,11 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     var q=$('#newsQ').value.trim().toLowerCase(), box=$('#newsBox');
     if(q){
       var r=NEWS.filter(function(n){return (n.title+' '+n.text).toLowerCase().indexOf(q)>-1});
-      box.innerHTML=r.length?'<div class="list">'+r.map(row).join('')+'</div>':'<p class="card empty">'+tr("Hech narsa topilmadi. Boshqa so'z bilan qidirib ko'ring.")+'</p>';
+      box.innerHTML=r.length?'<div class="news-grid">'+r.map(feat).join('')+'</div>':'<p class="card empty">'+tr("Hech narsa topilmadi. Boshqa so'z bilan qidirib ko'ring.")+'</p>';
     }else if(!NEWS.length){
       box.innerHTML='<p class="card empty">'+tr("Hozircha yangiliklar yo'q.")+'</p>';
     }else{
-      box.innerHTML='<div class="news-top">'+feat(NEWS[0])+'<div class="side-list">'+NEWS.slice(1,4).map(mini).join('')+'</div></div>'+
-        '<h2 class="sub">'+tr('Barcha yangiliklar')+'</h2><div class="list">'+NEWS.slice(4).map(row).join('')+'</div>';
+      box.innerHTML='<div class="news-grid">'+NEWS.map(feat).join('')+'</div>';
     }
   }
   $('#newsQ').addEventListener('input',renderNews);
