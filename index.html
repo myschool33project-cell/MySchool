@@ -702,6 +702,27 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
 #gate .g-apple:hover{border-color:var(--blue)}
 :root[data-theme="dark"] #gate .g-apple{background:#fff;border-color:#fff;color:#000}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #gate .g-apple{background:#fff;border-color:#fff;color:#000}}
+
+/* Floating "Savollar" button (phones) */
+.fab{display:none;position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:24;width:56px;height:56px;border:0;border-radius:50%;background:var(--blue);color:#fff;place-items:center;padding:0;box-shadow:0 8px 22px rgba(42,99,230,.4)}
+.fab .ic{width:26px;height:30px;stroke-width:2.6}
+.fab:active{transform:scale(.94)}
+:root[data-theme="dark"] .fab{background:#3b6fe0;color:#fff}
+@media (max-width:879px){
+  .fab{display:grid}
+  body[data-v="savollar"] .fab,body[data-v="admin"] .fab,body[data-v="arizalar"] .fab{display:none}
+}
+.fab{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;transition:transform .15s,box-shadow .15s}
+.fab.drag{transform:scale(1.18);box-shadow:0 14px 34px rgba(42,99,230,.55);transition:none}
+.fab{z-index:26}
+.fab.drag{z-index:28}
+.fab.over{transform:scale(.8)}
+.fab.gone{display:none!important}
+.fab-bin{display:none;position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:27;width:64px;height:64px;margin-left:-32px;border-radius:50%;background:rgba(20,28,56,.82);color:#fff;place-items:center;opacity:0;transform:translateY(30px) scale(.8);pointer-events:none;transition:opacity .2s,transform .2s,background .2s}
+.fab-bin .ic{width:28px;height:28px}
+.fab-bin.show{opacity:1;transform:none}
+.fab-bin.hot{background:var(--red);transform:scale(1.2)}
+@media (max-width:879px){ .fab-bin{display:grid} }
 </style>
 
 
@@ -926,6 +947,7 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
             <select class="field" id="fGrade">
               <option value="all">Barcha sinflar</option>
             </select><span data-ic="down"></span></label>
+          <label class="sel" id="fSchoolWrap" hidden><span class="vh">Maktab</span><select class="field" id="fSchool"></select><span data-ic="down"></span></label>
         </div>
         <div id="myRes"></div>
         <div class="podium" id="podium"></div>
@@ -997,9 +1019,9 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
           <button type="button" data-atype="schools" aria-pressed="false">Maktablar</button>
         </div>
         <div class="card adm" id="aForm">
+          <label>Maktab<select class="field" id="aSchool"></select></label>
           <label>Sarlavha<input class="field" id="aTitle" maxlength="120" autocomplete="off"></label>
           <label id="aCatRow" hidden>Turi<select class="field" id="aCat"></select></label>
-          <label id="aSchoolRow">Qaysi maktab uchun<select class="field" id="aSchool"></select></label>
           <label id="aMonthRow" hidden>Oy (filtr uchun)<select class="field" id="aMonth"></select></label>
           <label id="aDateRow" hidden><span id="aDateLbl">Sana</span><input class="field" id="aDate" maxlength="80" autocomplete="off"></label>
           <label>Qisqa matn (kartada ko'rinadi)<input class="field" id="aText" maxlength="160" autocomplete="off" placeholder="Bir-ikki gapda"></label>
@@ -1060,6 +1082,7 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
   </div>
 
   <nav class="tabs" id="tabs" aria-label="Pastki menyu"></nav>
+  <button type="button" class="fab" data-go="savollar" aria-label="Savollar"><svg class="ic" viewBox="6 4 12 16" aria-hidden="true"><path d="M8.6 8.6a3.5 3.5 0 0 1 6.8 1.1c0 2.3-3.4 3-3.4 5"/><line x1="12" y1="18.6" x2="12.01" y2="18.6"/></svg></button>
 </div>
 <div class="modal" id="guestModal" hidden>
   <div class="card adm" role="dialog" aria-modal="true" aria-labelledby="gmT">
@@ -1436,6 +1459,8 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
   var LANG_LIST=[['uz','O\u2018zbekcha','UZ'],['ru','\u0420\u0443\u0441\u0441\u043a\u0438\u0439','RU'],['en','English','EN'],['kk','\u049a\u0430\u0437\u0430\u049b\u0448\u0430','KZ']];
   var lang='uz'; try{ var sl=localStorage.getItem('myschool-lang'); if(LANG_LIST.some(function(l){return l[0]===sl})) lang=sl; }catch(e){}
   var D={}, FT=[];
+  var SCH0='33-maktab';
+  function schKey(x){ x=String(x||'').trim().toLowerCase(); var m=/\d+/.exec(x); return m?m[0]:x; }
   `Yuklanmoqda|Загрузка|Loading|Жүктелуде
 Katta orzular kichik qadamlar bilan|Большие мечты начинаются с|Big dreams start with|Үлкен армандар
 boshlanadi!|маленьких шагов!|small steps!|кішкентай қадамдардан басталады!
@@ -1849,7 +1874,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   ];
   var curView='asosiy';
   function buildNav(){
-    $('#nav').innerHTML=VIEWS.map(function(v){
+    $('#nav').innerHTML=VIEWS.filter(function(v){return v.id!=='arizalar'}).map(function(v){
       return '<button type="button" data-go="'+v.id+'">'+ic(v.icon)+'<span>'+tr(v.label)+'</span></button>';
     }).join('');
     $('#tabs').innerHTML=VIEWS.filter(function(v){return v.tab}).map(function(v){
@@ -1869,10 +1894,12 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   window.__msSetAdmin=function(v){
     v=!!v&&!GUEST; if(v===isAdmin) return; isAdmin=v; syncAdminNav();
     if(!v&&(curView==='admin'||curView==='arizalar')) go('asosiy');
-    if(typeof rebuildAll==='function'){ rebuildAll(); }
+    if(typeof rebuildAll==='function'){ try{ rebuildAll(); }catch(e){} }
   };
   function valid(id){return id==='admin'||VIEWS.some(function(v){return v.id===id})}
+  var pendAps='';
   function show(id){
+    var prev=curView;
     if(!valid(id)) id='asosiy';
     if(id==='profil'&&isAdmin) id='asosiy';
     if((id==='admin'||id==='arizalar')&&!isAdmin){ if(curView!==id&&document.documentElement.classList.contains('authed')) toast(tr("Admin paneliga faqat admin hisobi kira oladi.")); id='asosiy'; try{ location.hash='asosiy'; }catch(e){} }
@@ -1880,9 +1907,9 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     $$('#nav [data-go],#tabs [data-go]').forEach(function(b){
       if(b.getAttribute('data-go')===id) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
     });
-    closeNotes(); closeLang(); closeUser(); curView=id;
+    closeNotes(); closeLang(); closeUser(); curView=id; document.body.setAttribute('data-v',id);
     if(id==='bellashuvlar'||id==='tashabbuslar') refreshApps();
-    if(id==='arizalar'){ apSel=''; apFil='all'; renderApps(); }
+    if(id==='arizalar'){ if(pendAps){ apSel=pendAps; apFil='all'; } else if(prev!=='arizalar'){ apSel=''; apFil='all'; } renderApps(); }
     window.scrollTo(0,0);
   }
   function go(id){
@@ -1919,7 +1946,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       a.push({key:'app:'+p.id+':'+p.status,icon:ok?'star':'bell',go:p.k==='init'?'tashabbuslar':'bellashuvlar',txt:(p.t||'')+': '+tr(ok?'ariza tasdiqlandi. Siz ishtirok etasiz!':'ariza rad etildi.')});
     });
     [['news','Yangi yangilik:','yangiliklar','news'],['events','Yangi bellashuv:','bellashuvlar','trophy'],['inits','Yangi tashabbus:','tashabbuslar','bulb']].forEach(function(x){
-      store[x[0]].filter(vis).forEach(function(p){ c.push({key:x[0]+':'+p.id,ts:p.ts||0,icon:x[3],go:x[2],txt:tr(x[1])+' '+p.title}); });
+      store[x[0]].filter(visibleItem).forEach(function(p){ c.push({key:x[0]+':'+p.id,ts:p.ts||0,icon:x[3],go:x[2],txt:tr(x[1])+' '+p.title}); });
     });
     c.sort(function(x,y){return y.ts-x.ts});
     NOTES=a.concat(c.slice(0,6));
@@ -2031,7 +2058,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     $('#evBox').innerHTML=r.length?r.map(function(e){
       return '<article class="card ev">'+thumb(e)+'<div style="min-width:0"><span class="chip '+e.cls+'">'+tr(e.cat)+'</span><h3>'+e.title+'</h3>'+
         '<div class="when">'+ic('calendar')+'<span>'+locDate(e.date)+'</span></div><p>'+e.text+'</p></div>'+
-        '<div class="act">'+moreBtn(e.id).replace('class="link"','class="pill"')+applyBtn(e)+'</div>'+moreBox(e.id,e.more,e.imgs,e.link)+'</article>';
+        '<div class="act">'+moreBtn(e.id).replace('class="link"','class="pill"')+applyBtn(e,'event')+'</div>'+moreBox(e.id,e.more,e.imgs,e.link)+'</article>';
     }).join(''):'<p class="card empty">'+(EVENTS.length?tr("Bu oyda bellashuvlar yo'q."):tr("Hozircha bellashuvlar yo'q."))+'</p>';
   }
   $('#evMonth').addEventListener('change',renderEvents);
@@ -2045,7 +2072,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       return '<article class="card ev">'+thumb(t)+'<div style="min-width:0"><span class="chip '+t.cls+'">'+tr(t.cat)+'</span><h3>'+t.title+'</h3>'+
         '<div class="when">'+ic('calendar')+'<span>'+t.when+'</span></div><p>'+t.text+'</p></div>'+
         '<div class="act">'+moreBtn(t.id).replace('class="link"','class="pill"')+
-        applyBtn(t)+'</div>'+moreBox(t.id,t.more,t.imgs,t.link)+'</article>';
+        applyBtn(t,'init')+'</div>'+moreBox(t.id,t.more,t.imgs,t.link)+'</article>';
     }).join('');
   }
   $('#tbFilter').addEventListener('click',function(e){
@@ -2055,7 +2082,8 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     renderInits();
   });
   /* ---------- Rating ---------- */
-  var rs={p:'w',mode:'s',g:'all',cls:null,fk:'',all:false};
+  var rs={p:'w',mode:'s',g:'all',cls:null,fk:'',all:false,sch:''};
+  function ratingSK(){ if(GUEST) return '\u0000none'; if(isAdmin) return schKey(rs.sch||schoolList()[0]||SCH0); return schKey(profile.school); }
   var profile={name:'Foydalanuvchi',klass:'9-A',school:'1-son maktab',dob:'12.03.2010',email:'',phone:'',photo:''};
   try{ var saved=GUEST?null:localStorage.getItem('myschool-profile'); if(saved){ var o=JSON.parse(saved); for(var k in o){ if(typeof o[k]!=='string'||!(k in profile)) continue; if(k==='photo'&&o[k]&&o[k].indexOf('data:image/')!==0) continue; profile[k]=o[k]; } } }catch(e){}
 
@@ -2076,13 +2104,13 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
   // points are kept as a log; weekly / monthly / yearly totals are worked out from it automatically
   function computeRating(p,skip){
-    var cl=[], cm={}, st=[], sm={};
+    var cl=[], cm={}, st=[], sm={}, sk=ratingSK();
     CLASSES.forEach(function(c){ var o={n:c.n,g:c.g,k:0,sc:0}; cl.push(o); cm[c.n]=o; });
-    STUDENTS.forEach(function(s){ if(!cm[s.n]) return; var o={id:s.id,name:s.name,n:s.n,sc:0}; st.push(o); sm[s.id]=o; cm[s.n].k++; });
+    STUDENTS.forEach(function(s){ if(!cm[s.n]||schKey(s.sc||SCH0)!==sk) return; var o={id:s.id,name:s.name,n:s.n,sc:0}; st.push(o); sm[s.id]=o; cm[s.n].k++; });
     PTS.forEach(function(e){
       if(!inPeriod(e.ts,p)||(skip&&e.ts===skip)) return;
       if(e.t==='s'){ var s=sm[e.ref]; if(s){ s.sc+=e.v; cm[s.n].sc+=e.v; } }
-      else if(cm[e.ref]) cm[e.ref].sc+=e.v;
+      else if(cm[e.ref]&&schKey(e.sc||SCH0)===sk) cm[e.ref].sc+=e.v;
     });
     return {classes:cl,students:st};
   }
@@ -2122,6 +2150,8 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
   function renderRating(){
     avRefresh();
+    var sw=$('#fSchoolWrap');
+    if(sw){ sw.hidden=!isAdmin; if(isAdmin){ var sl=schoolList(); if(!rs.sch||sl.indexOf(rs.sch)<0) rs.sch=sl[0]||SCH0; var fs=$('#fSchool'), hk=sl.join('|'); if(fs.getAttribute('data-k')!==hk){ fs.setAttribute('data-k',hk); fs.innerHTML=sl.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join(''); } fs.value=rs.sch; } }
     var isS=rs.mode==='s', data=computeRating(rs.p), vals=fillRFilter();
     $$('#rMode button').forEach(function(b){ b.setAttribute('aria-pressed',String(b.getAttribute('data-rm')===rs.mode)); });
     var full=ranked(data.students,'name'), me=findMe(data.students), meR=me&&full.filter(function(x){return x.id===me.id})[0];
@@ -2182,6 +2212,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     more.hidden=list.length<=7;
     more.firstElementChild.textContent=tr(rs.all?'Qisqartirish':"To'liq reytingni ko'rish");
   }
+  $('#fSchool').addEventListener('change',function(){ rs.sch=this.value; rs.cls=null; rs.all=false; renderRating(); });
   $('#fPeriod').addEventListener('change',function(){rs.p=this.value;renderRating()});
   $('#fGrade').addEventListener('change',function(){ if(rs.mode==='s') rs.cls=this.value; else rs.g=this.value; rs.all=false; renderRating(); });
   $('#rMode').addEventListener('click',function(e){ var b=e.target.closest('[data-rm]'); if(!b) return; rs.mode=b.getAttribute('data-rm'); rs.all=false; renderRating(); });
@@ -2257,7 +2288,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   var DEFAULT_SCHOOLS=['33-maktab'];
   function schoolList(){ var s=(store&&store.schools)||[]; return s.length?s:DEFAULT_SCHOOLS; }
   function normKlass(t){
-    var s=String(t||'').toUpperCase().replace(/\u0410/g,'A').replace(/\u0412/g,'B').replace(/\u0411/g,'B').replace(/SINF|\u041A\u041B\u0410\u0421\u0421|CLASS/g,'').replace(/[\s\-_.:,\u2013\u2014\"'\u00ab\u00bb\u201c\u201d\u2018\u2019`]+/g,'');
+    var s=String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/\u0410/g,'A').replace(/\u0412/g,'B').replace(/\u0411/g,'B').replace(/SINF|\u041A\u041B\u0410\u0421\u0421|CLASS/g,'').replace(/[\s\-_.:,\u2013\u2014\"'\u00ab\u00bb\u201c\u201d\u2018\u2019`()\[\]{}]+/g,'');
     var m=/^(\d{1,2})([A-Z])$/.exec(s); return m?m[1]+'-'+m[2]:String(t||'').trim();
   }
   function fillSel(sel,list,curVal){
@@ -2347,7 +2378,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     return (Array.isArray(a)?a:[]).filter(function(x){return x&&typeof x.title==='string'&&typeof x.id==='string'}).map(function(x){
       var cat=String(x.cat||''); cat=cats?(cats.indexOf(cat)>-1?cat:cats[0]):'';
       var mo=String(x.month||''); mo=CFG[type].month?(MONTHS.indexOf(mo)>-1?mo:MONTHS[new Date().getMonth()]):'';
-      return {id:x.id,ts:+x.ts||0,school:String(x.school||'').slice(0,40),date:String(x.date||''),cat:cat,month:mo,title:String(x.title),text:String(x.text||''),more:String(x.more||''),
+      return {id:x.id,ts:+x.ts||0,school:String(x.school||SCH0).slice(0,40),date:String(x.date||''),cat:cat,month:mo,title:String(x.title),text:String(x.text||''),more:String(x.more||''),
         link:cleanLink(x.link),imgs:(Array.isArray(x.imgs)?x.imgs:[]).filter(function(u){return typeof u==='string'&&u.indexOf('data:image/')===0}).slice(0,6)};
     });
   }
@@ -2361,17 +2392,17 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
   function cleanStudents(a){
     return (Array.isArray(a)?a:[]).filter(function(x){return x&&typeof x.id==='string'&&typeof x.name==='string'&&typeof x.n==='string'&&x.name.trim()}).map(function(x){
-      return {id:x.id.slice(0,24),name:x.name.replace(/\s+/g,' ').trim().slice(0,40),n:normKlass(x.n).slice(0,6),s:String(x.s||'').slice(0,40)};
+      return {id:x.id.slice(0,24),name:x.name.replace(/\s+/g,' ').trim().slice(0,40),n:normKlass(x.n).slice(0,6),sc:String(x.sc||'').slice(0,40)};
     });
   }
   function cleanPts(a){
     return (Array.isArray(a)?a:[]).filter(function(x){return x&&typeof x.id==='string'&&(x.t==='s'||x.t==='c')&&typeof x.ref==='string'&&isFinite(+x.v)&&+x.v!==0}).map(function(x){
-      return {id:x.id.slice(0,28),ts:+x.ts||0,t:x.t,ref:(x.t==='c'?normKlass(x.ref):x.ref).slice(0,24),v:Math.max(-1000,Math.min(1000,+x.v)),note:String(x.note||'').slice(0,80),s:String(x.s||'').slice(0,40)};
+      return {id:x.id.slice(0,28),ts:+x.ts||0,t:x.t,ref:(x.t==='c'?normKlass(x.ref):x.ref).slice(0,24),v:Math.max(-1000,Math.min(1000,+x.v)),note:String(x.note||'').slice(0,80),sc:String(x.sc||'').slice(0,40)};
     }).slice(-20000);
   }
   function cleanHeroes(d){
     var a=Array.isArray(d.heroes)?d.heroes:(typeof d.hero==='string'&&d.hero?[d.hero]:[]); // older files held one picture in "hero"
-    return a.map(function(h){ return typeof h==='string'?{u:h,s:''}:(h&&typeof h==='object'?{u:h.u,s:String(h.s||'').slice(0,40)}:null); }).filter(function(h){return h&&typeof h.u==='string'&&h.u.indexOf('data:image/')===0}).slice(0,60);
+    return a.filter(function(u){return typeof u==='string'&&u.indexOf('data:image/')===0}).slice(0,5);
   }
   function cleanFaq(a){
     if(!Array.isArray(a)) return null; var LL=['uz','ru','en','kk'];
@@ -2409,27 +2440,26 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   /* every class that exists (from the fixed list, students and old class points), always in clean "9-A" form */
   function allClasses(){
     var seen={}, out=[];
-    function add(n){ n=normKlass(n).slice(0,6); if(!n||seen[n]) return; seen[n]=1; out.push({n:n,g:parseInt(n)||0}); }
+    function add(n){ n=normKlass(n).slice(0,6); if(!n||seen[n]||!/^\d{1,2}-[A-Z]$/.test(n)) return; seen[n]=1; out.push({n:n,g:parseInt(n)||0}); }
     (store.classes||BASE_CLASSES).forEach(function(c){ add(c.n); });
     store.students.forEach(function(s){ add(s.n); });
     store.pts.forEach(function(e){ if(e.t==='c') add(e.ref); });
     out.sort(function(a,b){ return a.g-b.g||a.n.localeCompare(b.n); });
     return out;
   }
-  /* School isolation: a post/student belongs to one school ('*' = all schools; empty = the default school). Admin sees everything. */
-  function visOf(sc){ if(isAdmin) return true; sc=sc||DEFAULT_SCHOOLS[0]; return sc==='*'||sc===(GUEST?'':profile.school); }
-  function vis(o){ return visOf(o.school); }
+  function mySchKey(){ return (GUEST||isAdmin)?'':schKey(profile.school); }
+  function visibleItem(p){ if(isAdmin) return true; var sc=p.school||SCH0; if(sc==='*') return true; var k=mySchKey(); return !!k&&schKey(sc)===k; }
   function rebuildAll(){
-    NEWS=store.news.filter(vis).slice().sort(byNew).map(function(p){
+    NEWS=store.news.filter(visibleItem).sort(byNew).map(function(p){
       return {id:'p'+p.id,theme:'school',icon:'news',date:p.date,title:esc(p.title),text:esc(p.text),more:br(p.more),imgs:p.imgs,link:p.link};
     }).concat(BASE_NEWS);
-    EVENTS=store.events.filter(vis).slice().sort(byNew).map(function(p){
+    EVENTS=store.events.filter(visibleItem).sort(byNew).map(function(p){
       var c=EVCAT[p.cat]||EVCAT.Sport;
-      return {id:'pe'+p.id,cat:p.cat,cls:c.cls,theme:c.theme,icon:c.icon,month:p.month,title:esc(p.title),date:esc(p.date),text:esc(p.text),more:br(p.more),imgs:p.imgs,link:p.link};
+      return {sch:p.school,id:'pe'+p.id,cat:p.cat,cls:c.cls,theme:c.theme,icon:c.icon,month:p.month,title:esc(p.title),date:esc(p.date),text:esc(p.text),more:br(p.more),imgs:p.imgs,link:p.link};
     }).concat(BASE_EVENTS).sort(function(a,b){return MONTHS.indexOf(a.month)-MONTHS.indexOf(b.month)});
-    INITS=store.inits.filter(vis).slice().sort(byNew).map(function(p){
+    INITS=store.inits.filter(visibleItem).sort(byNew).map(function(p){
       var c=ITCAT[p.cat]||ITCAT.Loyiha;
-      return {id:'pt'+p.id,cat:p.cat,cls:c.cls,theme:c.theme,icon:c.icon,title:esc(p.title),when:esc(p.date),text:esc(p.text),more:br(p.more),imgs:p.imgs,link:p.link};
+      return {sch:p.school,id:'pt'+p.id,cat:p.cat,cls:c.cls,theme:c.theme,icon:c.icon,title:esc(p.title),when:esc(p.date),text:esc(p.text),more:br(p.more),imgs:p.imgs,link:p.link};
     }).concat(BASE_INITS);
     if(hasLocal) contentLoaded=true;
     if(contentLoaded) purgeApps();
@@ -2438,8 +2468,8 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     ms.sort(function(a,b){return MONTHS.indexOf(a)-MONTHS.indexOf(b)});
     sel.innerHTML='<option value="all">'+tr('Barcha sana')+'</option>'+ms.map(function(m){return '<option value="'+m+'">'+mName(m)+'</option>'}).join('');
     sel.value=(keep==='all'||ms.indexOf(keep)>-1)?keep:'all';
-    CLASSES=allClasses(); STUDENTS=store.students.filter(function(x){return visOf(x.s)}); PTS=store.pts.filter(function(e){return e.t!=='c'||visOf(e.s)}); applyHero();
-    renderNews(); renderEvents(); renderInits(); renderRating(); fillASchool(); renderAdmin(); renderNotes(); renderFaq();
+    CLASSES=allClasses(); STUDENTS=store.students; PTS=store.pts; applyHero();
+    renderNews(); renderEvents(); renderInits(); renderRating(); renderAdmin(); renderNotes(); renderFaq();
   }
   // without Firebase, visitors get the published content from news.json (unless this browser has its own copy)
   function loadNewsJson(){
@@ -2466,7 +2496,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(cur==='hero') return renderHeroEditor();
     var l=$('#aList'), arr=store[cur];
     l.innerHTML=arr.length?arr.slice().sort(byNew).map(function(p){
-      var meta=(cur==='news'?p.date:(p.cat+' · '+p.date))+' · '+(p.school==='*'?'Hamma maktablar':(p.school||DEFAULT_SCHOOLS[0]));
+      var meta=(cur==='news'?p.date:(p.cat+' · '+p.date))+' · '+(p.school==='*'?'Barcha maktablar':(p.school||SCH0));
       return '<div class="card arow"><div><b>'+esc(p.title)+'</b><span class="date">'+esc(meta)+(p.imgs.length?' · '+p.imgs.length+' rasm':'')+'</span></div>'+
         '<div class="act"><button type="button" class="pill" data-aedit="'+p.id+'">Tahrirlash</button><button type="button" class="pill" data-adel="'+p.id+'">O\'chirish</button></div></div>';
     }).join(''):'<p class="card empty">Hali hech narsa qo\'shmadingiz.</p>';
@@ -2487,15 +2517,10 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(ad){ var v=($('#scNew').value||'').trim(); if(!v){ toast('Maktab nomini yozing'); return; } schoolsChange(function(a){ a.push(v); return a; }); toast("Maktab qo'shildi"); }
     else if(dl){ var i=+dl.getAttribute('data-scdel'); if(!confirm("Bu maktabni ro'yxatdan olib tashlaysizmi? Foydalanuvchilarning avvalgi ma'lumoti o'zgarmaydi.")) return; schoolsChange(function(a){ a.splice(i,1); return a; }); }
   });
-  function fillASchool(reset){
-    var sl=$('#aSchool'); if(!sl) return; var v=reset?DEFAULT_SCHOOLS[0]:sl.value;
-    sl.innerHTML=opt('*','Hamma maktablar',false)+schoolList().map(function(x){ return opt(x,x,false); }).join('');
-    sl.value=v; if(sl.value!==v) sl.value=schoolList()[0];
-  }
   function resetDraft(){
     draft={editId:null,imgs:[]};
     ['#aTitle','#aText','#aMore','#aDate','#aLink'].forEach(function(k){ $(k).value=''; });
-    $('#aImgs').value=''; fillASchool(true); $('#aSave').textContent='Joylash'; $('#aCancel').hidden=true; renderThumbs();
+    $('#aImgs').value=''; $('#aSave').textContent='Joylash'; $('#aCancel').hidden=true; renderThumbs();
   }
   function applyType(){
     if(cur==='hero'){
@@ -2526,6 +2551,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     $('#aForm').hidden=false;
     var c=CFG[cur];
     $('#aTitle').placeholder=c.ph;
+    (function(){ var as=$('#aSchool'), keep=as.value; as.innerHTML=schoolList().map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join('')+'<option value="*">Barcha maktablar</option>'; if(keep) as.value=keep; })();
     $('#aCatRow').hidden=!c.cats; $('#aMonthRow').hidden=!c.month; $('#aDateRow').hidden=!c.date;
     if(c.cats) $('#aCat').innerHTML=c.cats.map(function(x){return '<option value="'+x+'">'+x+'</option>'}).join('');
     if(c.date){ $('#aDateLbl').textContent=c.dateLbl; $('#aDate').placeholder=c.datePh; }
@@ -2571,13 +2597,13 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(c.date&&!date){ toast('Sana yoki jadvalni yozing'); return; }
     var rawL=$('#aLink').value.trim(), link=cleanLink(rawL); if(rawL&&!link){ toast("Havola noto'g'ri. https:// bilan boshlang"); return; }
     if(!text) text=more.length>140?more.slice(0,137)+'...':more;
-    var cat=c.cats?$('#aCat').value:'', month=c.month?$('#aMonth').value:'', school=$('#aSchool').value;
+    var cat=c.cats?$('#aCat').value:'', month=c.month?$('#aMonth').value:'', school=$('#aSchool').value||SCH0;
     var prev=JSON.stringify(store), editing=draft.editId, arr=store[cur];
     if(editing){
-      arr.forEach(function(p){ if(p.id===editing){ p.title=title; p.text=text; p.more=more; p.imgs=draft.imgs.slice(); p.link=link; p.cat=cat; p.month=month; p.school=school; if(c.date) p.date=date; } });
+      arr.forEach(function(p){ if(p.id===editing){ p.school=school; p.title=title; p.text=text; p.more=more; p.imgs=draft.imgs.slice(); p.link=link; p.cat=cat; p.month=month; if(c.date) p.date=date; } });
     }else{
       var now=new Date();
-      arr.unshift({id:now.getTime().toString(36),ts:now.getTime(),date:c.date?date:fmtDate(now),cat:cat,month:month,title:title,text:text,more:more,imgs:draft.imgs.slice(),link:link,school:school});
+      arr.unshift({id:now.getTime().toString(36),ts:now.getTime(),school:school,date:c.date?date:fmtDate(now),cat:cat,month:month,title:title,text:text,more:more,imgs:draft.imgs.slice(),link:link});
     }
     if(!savePosts()){ store=JSON.parse(prev); toast("Xotira to'ldi. Rasmlarni kamaytiring."); return; }
     rebuildAll(); resetDraft();
@@ -2589,9 +2615,8 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(ed){
       var p=store[cur].filter(function(x){return x.id===ed.getAttribute('data-aedit')})[0]; if(!p) return;
       draft={editId:p.id,imgs:p.imgs.slice()};
-      $('#aTitle').value=p.title; $('#aLink').value=p.link||''; $('#aText').value=p.text; $('#aMore').value=p.more; $('#aDate').value=CFG[cur].date?p.date:'';
+      $('#aSchool').value=p.school||SCH0; $('#aTitle').value=p.title; $('#aLink').value=p.link||''; $('#aText').value=p.text; $('#aMore').value=p.more; $('#aDate').value=CFG[cur].date?p.date:'';
       if(CFG[cur].cats) $('#aCat').value=p.cat;
-      fillASchool(); $('#aSchool').value=p.school||DEFAULT_SCHOOLS[0];
       if(CFG[cur].month) $('#aMonth').value=p.month;
       $('#aSave').textContent='Yangilash'; $('#aCancel').hidden=false; renderThumbs();
       $('#aTitle').scrollIntoView({behavior:'smooth',block:'center'}); $('#aTitle').focus();
@@ -2683,8 +2708,8 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   var myApps=GUEST?{}:lsGet(MYK), apEv=null, apKind='event';
   function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return d.textContent; }
   function rid(){ return Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(14)),function(b){return (b%36).toString(36)}).join(''); }
-  function applyBtn(e){
-    if(isAdmin) return ''; // the admin account only publishes; it never takes part
+  function applyBtn(e,kind){
+    if(isAdmin) return '<button type="button" class="pill solid" data-aps="'+(kind==='init'?'init':'event')+'|'+e.id+'">'+tr('Arizalar')+'</button>'; // the admin account only publishes; it sees the applications instead
     var a=myApps[e.id];
     if(!a) return '<button type="button" class="pill solid" data-apply="'+e.id+'">'+tr('Ariza topshirish')+'</button>';
     return '<span class="stat '+a.status+'">'+tr(STAT[a.status]||STAT.pending)+'</span>';
@@ -2736,6 +2761,11 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
   $('#evBox').addEventListener('click',function(e){ var b=e.target.closest('[data-apply]'); if(b) openApply('event',b.getAttribute('data-apply')); });
   $('#tbBox').addEventListener('click',function(e){ var b=e.target.closest('[data-apply]'); if(b) openApply('init',b.getAttribute('data-apply')); });
+  function openAps(e){
+    var b=e.target.closest('[data-aps]'); if(!b||!isAdmin) return;
+    pendAps=b.getAttribute('data-aps'); setTimeout(function(){ pendAps=''; },600); go('arizalar');
+  }
+  $('#evBox').addEventListener('click',openAps); $('#tbBox').addEventListener('click',openAps);
   $('#apCancel').addEventListener('click',closeAp);
   $('#apModal').addEventListener('click',function(e){ if(e.target===this) closeAp(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAp(); });
@@ -2755,8 +2785,8 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function apGroups(){
     var g=[], idx={};
     function add(kind,id,title,arch){ var k=apKey(kind,id), o={key:k,kind:kind==='init'?'init':'event',id:id,title:title,arch:!!arch,apps:[]}; idx[k]=o; g.push(o); return o; }
-    EVENTS.forEach(function(e){ add('event',e.id,plain(e.title),false); });
-    INITS.forEach(function(e){ add('init',e.id,plain(e.title),false); });
+    EVENTS.forEach(function(e){ add('event',e.id,plain(e.title)+(e.sch&&e.sch!=='*'?' ('+e.sch+')':''),false); });
+    INITS.forEach(function(e){ add('init',e.id,plain(e.title)+(e.sch&&e.sch!=='*'?' ('+e.sch+')':''),false); });
     apAll.forEach(function(a){ var o=idx[apKey(a.kind,a.evId)]||add(a.kind,a.evId,a.evTitle||'—',contentLoaded); o.apps.push(a); });
     return g;
   }
@@ -2799,7 +2829,9 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
 
 /* ---------- Admin: rating (students + classes, points log) ---------- */
-  var re={cls:'',uid:'',q:'',pts:'',note:''};
+  var re={cls:'',uid:'',q:'',pts:'',note:'',sch:''};
+  function ensureReSch(){ var sl=schoolList(); if(!re.sch||sl.indexOf(re.sch)<0) re.sch=sl[0]||SCH0; }
+  function schUsers(){ ensureReSch(); var k=schKey(re.sch); return realUsers().filter(function(u){ return schKey(u.school||SCH0)===k; }); }
   function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
   function rosterEdit(){ if(!store.classes) store.classes=BASE_CLASSES.map(function(c){return {n:c.n,g:c.g}}); return store.classes; }
   function rmut(fn,msg){
@@ -2812,19 +2844,20 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function validK(n){ return /^\d{1,2}-[A-Z]$/.test(n); }
   function uCls(u){ var n=normKlass(u.klass); return validK(n)?n:'?'; }
   function uKey(u){ return u.uid||('n:'+normName(u.name)+'|'+u.klass); }
-  function uStu(u){ var c=uCls(u); return STUDENTS.filter(function(s){ return normName(s.name)===normName(u.name)&&s.n===c&&(s.s||DEFAULT_SCHOOLS[0])===(u.school||DEFAULT_SCHOOLS[0]); })[0]||null; }
+  function uStu(u){ var c=uCls(u); return STUDENTS.filter(function(s){ return normName(s.name)===normName(u.name)&&s.n===c&&schKey(s.sc||SCH0)===schKey(re.sch||SCH0); })[0]||null; }
   function uTotal(u){ var s=uStu(u); if(!s) return 0; return Math.round(PTS.reduce(function(t,e){ return t+((e.t==='s'&&e.ref===s.id)?e.v:0); },0)*10)/10; }
   function clsNames(){ var seen={}, o=[]; KLASS_LIST.concat(CLASSES.map(function(c){return c.n;})).forEach(function(n){ if(!seen[n]){ seen[n]=1; o.push(n); } }); o.sort(function(a,b){ return (parseInt(a)||0)-(parseInt(b)||0)||a.localeCompare(b); }); return o; }
   var ruLoaded=false, ruLoading=false, ruFail=false;
   function realUsers(){ return ruList.filter(function(u){ return u&&u.name; }); }
   function renderRatingEditor(){
     if(!ruLoaded){ $('#aList').innerHTML='<p class="card empty">'+(ruFail?'Foydalanuvchilarni yuklab bo\'lmadi. Firebase qoidalarini tekshiring.':'Yuklanmoqda...')+'</p>'+(ruFail?'<div class="adm-btns"><button type="button" class="btn small" id="reRetry">Qayta urinish</button></div>':''); if(!ruLoading&&!ruFail) loadRU(); return; }
-    var us=realUsers(), names=clsNames(), cnt={};
+    ensureReSch(); var us=schUsers(), names=clsNames(), cnt={};
     us.forEach(function(u){ var c=uCls(u); cnt[c]=(cnt[c]||0)+1; });
     if(re.cls!=='?'&&names.indexOf(re.cls)<0) re.cls='';
     if(!re.cls) re.cls=names.filter(function(n){return cnt[n]})[0]||names[0]||'';
     var sel=names.map(function(n){ return opt(n,n+' ('+(cnt[n]||0)+')',n===re.cls); }).join('')+(cnt['?']?opt('?',"Sinfi aniqlanmagan ("+cnt['?']+')',re.cls==='?'):'');
     var award='<div class="card adm"><b>Ball berish</b><p class="hint">Sinfni tanlang, o\'quvchini bosing va ball bering. Ro\'yxatdan o\'tgan hamma foydalanuvchi o\'z sinfida avtomatik turadi. Ball o\'quvchining sinf hisobiga ham o\'zi qo\'shiladi.</p>'+
+      '<label>Maktab<select class="field" id="reSch">'+schoolList().map(function(x){ return opt(x,x,x===re.sch); }).join('')+'</select></label>'+
       '<label>Sinf<select class="field" id="reCls">'+sel+'</select></label>'+
       '<input class="field" id="ruQ" type="search" placeholder="Ism bo\'yicha qidirish (hamma sinflardan)..." autocomplete="off" value="'+esc(re.q)+'">'+
       '<div id="ruBox"></div></div>';
@@ -2833,7 +2866,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     var roster='<div class="card adm"><b>Reytingdagi o\'quvchilar</b><p class="hint">Faqat ball olgan o\'quvchilar bu yerda paydo bo\'ladi.</p>'+
       '<div class="adm-btns"><button type="button" class="btn ghost small" id="reClearAll">Reytingdagi hamma o\'quvchilarni tozalash</button></div>'+
       CLASSES.map(function(c){
-        var ss=STUDENTS.filter(function(s){return s.n===c.n}).sort(function(a,b){return a.name.localeCompare(b.name)});
+        var ss=STUDENTS.filter(function(s){return s.n===c.n&&schKey(s.sc||SCH0)===schKey(re.sch)}).sort(function(a,b){return a.name.localeCompare(b.name)});
         if(!ss.length) return '';
         return '<details class="ros"><summary><span>'+esc(c.n)+' · '+ss.length+' o\'quvchi</span></summary>'+ss.map(function(s){ return '<div class="bk-row"><span>'+esc(s.name)+'</span><button type="button" class="pill" data-delst="'+s.id+'">O\'chirish</button></div>'; }).join('')+'</details>';
       }).join('')+'</div>';
@@ -2846,7 +2879,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
   function drawPick(){
     var b=$('#ruBox'); if(!b) return; var q=normName(re.q);
-    var us=realUsers().filter(function(u){ return q?normName(u.name+' '+(u.klass||'')).indexOf(q)>-1:uCls(u)===re.cls; });
+    var us=schUsers().filter(function(u){ return q?normName(u.name+' '+(u.klass||'')).indexOf(q)>-1:uCls(u)===re.cls; });
     us.sort(function(x,y){ return x.name.localeCompare(y.name); });
     if(q) us=us.slice(0,60);
     b.innerHTML=us.length?us.map(function(u){
@@ -2880,6 +2913,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   });
   $('#aList').addEventListener('change',function(e){
     if(cur!=='rating') return; var t=e.target;
+    if(t.id==='reSch'){ re.sch=t.value; re.cls=''; re.uid=''; re.q=''; renderRatingEditor(); return; }
     if(t.id==='reCls'){ re.cls=t.value; re.uid=''; re.q=''; renderRatingEditor(); }
   });
   $('#aList').addEventListener('click',function(e){
@@ -2890,9 +2924,11 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(q){ re.pts=q.getAttribute('data-rq'); $('#rePts').value=re.pts; return; }
     if(un){ var id=un.getAttribute('data-undo'); rmut(function(){ store.pts=store.pts.filter(function(x){return x.id!==id}); },'Ball bekor qilindi'); return; }
     if(ca){
-      if(!STUDENTS.length){ toast('Reytingda o\'quvchi yo\'q'); return; }
-      if(!confirm('Reytingdagi barcha '+STUDENTS.length+' ta o\'quvchi va ularning ballari o\'chiriladi. Davom etasizmi?')) return;
-      rmut(function(){ store.students=[]; store.pts=store.pts.filter(function(x){return x.t!=='s'}); },'Reytingdagi barcha o\'quvchilar o\'chirildi'); return;
+      var kk=schKey(re.sch||SCH0), ids={}; STUDENTS.forEach(function(x){ if(schKey(x.sc||SCH0)===kk) ids[x.id]=1; });
+      var nn=Object.keys(ids).length;
+      if(!nn){ toast('Reytingda o\'quvchi yo\'q'); return; }
+      if(!confirm(re.sch+': reytingdagi barcha '+nn+' ta o\'quvchi va ularning ballari o\'chiriladi. Davom etasizmi?')) return;
+      rmut(function(){ store.students=store.students.filter(function(x){return !ids[x.id]}); store.pts=store.pts.filter(function(x){return !(x.t==='s'&&ids[x.ref])}); },'Reytingdagi o\'quvchilar o\'chirildi'); return;
     }
     if(ds){
       var sid=ds.getAttribute('data-delst'), nm=stName(sid);
@@ -2922,7 +2958,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       var v=numOf(re.pts), note=re.note.trim().slice(0,80); if(!v){ toast('Ballni kiriting'); return; }
       re.pts=''; re.note=''; re.uid='';
       rmut(function(){
-        var s=uStu(u); if(!s){ s={id:uid(),name:u.name.slice(0,40),n:c,s:u.school||DEFAULT_SCHOOLS[0]}; store.students.push(s); }
+        var s=uStu(u); if(!s){ s={id:uid(),name:u.name.slice(0,40),n:c,sc:re.sch}; store.students.push(s); }
         store.pts.push({id:uid()+'p',ts:Date.now(),t:'s',ref:s.id,v:v,note:note});
       },u.name+': '+(v>0?'+':'')+fmtPts(v)+' ball');
     }
@@ -3049,9 +3085,6 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
 
 /* ---------- Admin: main page pictures (slideshow, up to 5) ---------- */
-  var heroSch=DEFAULT_SCHOOLS[0];
-  function heroSchoolOpts(){ return opt('*','Hamma maktablar',heroSch==='*')+schoolList().map(function(x){ return opt(x,x,x===heroSch); }).join(''); }
-  function heroOf(h){ return (h.s||DEFAULT_SCHOOLS[0])===heroSch; }
   var heroDraft=[], heroTimer=null, heroIdx=0, HERO_MAX=5;
   function goSlide(i){
     var im=$$('#heroSlides img'), dt=$$('#heroSlides .hero-dots button'); if(!im.length) return;
@@ -3062,12 +3095,12 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function stopHero(){ clearInterval(heroTimer); heroTimer=null; }
   function startHero(){
     stopHero();
-    if($$('#heroSlides img').length<2||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    if(store.heroes.length<2||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
     heroTimer=setInterval(function(){ goSlide(heroIdx+1); },4500);
   }
   function applyHero(){
     applyHeroText();
-    var list=store.heroes.filter(function(h){return visOf(h.s)}).map(function(h){return h.u}), box=$('#heroSlides'), sv=$('.hero-art');
+    var list=store.heroes, box=$('#heroSlides'), sv=$('.hero-art');
     stopHero(); heroIdx=0;
     if(!list.length){ box.hidden=true; box.innerHTML=''; sv.style.display=''; return; }
     box.innerHTML=list.map(function(u,i){ return '<img src="'+u+'" alt=""'+(i?'':' class="on"')+'>'; }).join('')+
@@ -3083,15 +3116,14 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function drawHeroEditor(){
     if($('#aList [data-ht]')) htDraft=grabHt();
     var full=heroDraft.length>=HERO_MAX;
-    $('#aList').innerHTML=htCard()+'<div class="card adm"><label>Qaysi maktab uchun<select class="field" id="hSchool">'+heroSchoolOpts()+'</select></label><p class="hint">Bosh sahifa uchun '+HERO_MAX+' tagacha rasm qo\'shing. Bir nechta bo\'lsa, ular o\'zi almashib turadi. Rasm bo\'lmasa, standart rasm ko\'rinadi.</p>'+
+    $('#aList').innerHTML=htCard()+'<div class="card adm"><p class="hint">Bosh sahifa uchun '+HERO_MAX+' tagacha rasm qo\'shing. Bir nechta bo\'lsa, ular o\'zi almashib turadi. Rasm bo\'lmasa, standart rasm ko\'rinadi.</p>'+
       '<div class="thumbs" id="hThumbs">'+heroDraft.map(function(u,i){
         return '<div class="thumb"><img src="'+u+'" alt=""><button type="button" data-hrm="'+i+'" aria-label="Rasmni olib tashlash">×</button></div>';
       }).join('')+'</div>'+
       (full?'<p class="hint">'+HERO_MAX+' ta rasm qo\'shildi. Yangisini qo\'shish uchun avval bittasini olib tashlang.</p>':'<label>Rasm qo\'shish ('+heroDraft.length+'/'+HERO_MAX+')<input type="file" id="hFile" accept="image/*" multiple></label>')+
       '<div class="adm-btns"><button type="button" class="btn" id="hSave">Saqlash</button><button type="button" class="btn ghost" id="hReset">Standart rasmga qaytish</button></div></div>';
   }
-  function renderHeroEditor(){ heroDraft=store.heroes.filter(heroOf).map(function(h){return h.u}); drawHeroEditor(); }
-  $('#aList').addEventListener('change',function(e){ if(cur==='hero'&&e.target.id==='hSchool'){ heroSch=e.target.value; renderHeroEditor(); } });
+  function renderHeroEditor(){ heroDraft=store.heroes.slice(); drawHeroEditor(); }
   $('#aList').addEventListener('change',function(e){
     if(cur!=='hero'||e.target.id!=='hFile'||!e.target.files.length) return;
     var files=Array.prototype.slice.call(e.target.files).slice(0,HERO_MAX-heroDraft.length);
@@ -3113,7 +3145,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     var sv=e.target.closest('#hSave'), rs=e.target.closest('#hReset');
     if(!sv&&!rs) return;
     if(sv&&!heroDraft.length){ toast('Avval rasm qo\'shing'); return; }
-    var prev=JSON.stringify(store); store.heroes=store.heroes.filter(function(h){return !heroOf(h)}).concat(sv?heroDraft.map(function(u){return {u:u,s:heroSch}}):[]);
+    var prev=JSON.stringify(store); store.heroes=sv?heroDraft.slice():[];
     if(!savePosts()){ store=JSON.parse(prev); toast("Xotira to'ldi. Kamroq yoki kichikroq rasm tanlang."); return; }
     rebuildAll(); if(!FB.url) toast(sv?'Bosh sahifa rasmlari saqlandi (faqat shu brauzerda)':'Standart rasm qaytarildi');
   });
@@ -3182,6 +3214,54 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     var i=a.hasAttribute('data-gal')?(+a.getAttribute('data-gal')||0):0;
     open(l,i);
   });
+})();
+</script>
+
+<script>
+/* Floating button: hold to move it, drop on the bin to hide it until the next reload, tap to open Savollar */
+(function(){
+  var fab=document.querySelector('.fab'); if(!fab) return;
+  var KEY='myschool-fab', S=56, M=8, timer=null, drag=false, sx=0, sy=0, ox=0, oy=0, noClick=false, hot=false;
+  var bin=document.createElement('div'); bin.className='fab-bin'; bin.setAttribute('aria-hidden','true');
+  bin.innerHTML='<svg class="ic" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+  fab.parentNode.appendChild(bin);
+  function clamp(x,y){ return [Math.max(M,Math.min(window.innerWidth-S-M,x)), Math.max(M+8,Math.min(window.innerHeight-S-M,y))]; }
+  function put(x,y){ var c=clamp(x,y); fab.style.left=c[0]+'px'; fab.style.top=c[1]+'px'; fab.style.right='auto'; fab.style.bottom='auto'; return c; }
+  function load(){
+    try{ var v=JSON.parse(localStorage.getItem(KEY)); if(v&&isFinite(v.x)&&isFinite(v.y)) put(v.x*(window.innerWidth-S),v.y*(window.innerHeight-S)); }catch(e){}
+  }
+  function save(x,y){ try{ localStorage.setItem(KEY,JSON.stringify({x:x/(window.innerWidth-S),y:y/(window.innerHeight-S)})); }catch(e){} }
+  function overBin(){
+    var a=fab.getBoundingClientRect(), b=bin.getBoundingClientRect();
+    var dx=(a.left+a.width/2)-(b.left+b.width/2), dy=(a.top+a.height/2)-(b.top+b.height/2);
+    return Math.sqrt(dx*dx+dy*dy)<62;
+  }
+  fab.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+  fab.addEventListener('pointerdown',function(e){
+    if(e.button>0) return;
+    var r=fab.getBoundingClientRect(); sx=e.clientX; sy=e.clientY; ox=r.left; oy=r.top; drag=false;
+    try{ fab.setPointerCapture(e.pointerId); }catch(x){}
+    clearTimeout(timer);
+    timer=setTimeout(function(){ drag=true; fab.classList.add('drag'); bin.classList.add('show'); try{ navigator.vibrate&&navigator.vibrate(18); }catch(x){} },350);
+  });
+  fab.addEventListener('pointermove',function(e){
+    if(!drag){ if(timer&&(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10)){ clearTimeout(timer); timer=null; } return; }
+    e.preventDefault(); put(ox+e.clientX-sx,oy+e.clientY-sy);
+    var h=overBin(); if(h!==hot){ hot=h; bin.classList.toggle('hot',h); fab.classList.toggle('over',h); if(h){ try{ navigator.vibrate&&navigator.vibrate(12); }catch(x){} } }
+  });
+  function end(){
+    clearTimeout(timer); timer=null;
+    if(drag){
+      noClick=true; setTimeout(function(){ noClick=false; },80);
+      if(hot){ fab.classList.add('gone'); } /* hidden only until the site is reloaded or opened again */
+      else{ var r=fab.getBoundingClientRect(); save(r.left,r.top); }
+    }
+    drag=false; hot=false; fab.classList.remove('drag','over'); bin.classList.remove('show','hot');
+  }
+  fab.addEventListener('pointerup',end); fab.addEventListener('pointercancel',end);
+  fab.addEventListener('click',function(e){ if(noClick){ e.stopPropagation(); e.preventDefault(); } },true);
+  window.addEventListener('resize',load);
+  load();
 })();
 </script>
 
