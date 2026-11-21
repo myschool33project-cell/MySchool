@@ -702,27 +702,6 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
 #gate .g-apple:hover{border-color:var(--blue)}
 :root[data-theme="dark"] #gate .g-apple{background:#fff;border-color:#fff;color:#000}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #gate .g-apple{background:#fff;border-color:#fff;color:#000}}
-
-/* Floating "Savollar" button (phones) */
-.fab{display:none;position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:24;width:56px;height:56px;border:0;border-radius:50%;background:var(--blue);color:#fff;place-items:center;padding:0;box-shadow:0 8px 22px rgba(42,99,230,.4)}
-.fab .ic{width:26px;height:30px;stroke-width:2.6}
-.fab:active{transform:scale(.94)}
-:root[data-theme="dark"] .fab{background:#3b6fe0;color:#fff}
-@media (max-width:879px){
-  .fab{display:grid}
-  body[data-v="savollar"] .fab,body[data-v="admin"] .fab,body[data-v="arizalar"] .fab{display:none}
-}
-.fab{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;transition:transform .15s,box-shadow .15s}
-.fab.drag{transform:scale(1.18);box-shadow:0 14px 34px rgba(42,99,230,.55);transition:none}
-.fab{z-index:26}
-.fab.drag{z-index:28}
-.fab.over{transform:scale(.8)}
-.fab.gone{display:none!important}
-.fab-bin{display:none;position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:27;width:64px;height:64px;margin-left:-32px;border-radius:50%;background:rgba(20,28,56,.82);color:#fff;place-items:center;opacity:0;transform:translateY(30px) scale(.8);pointer-events:none;transition:opacity .2s,transform .2s,background .2s}
-.fab-bin .ic{width:28px;height:28px}
-.fab-bin.show{opacity:1;transform:none}
-.fab-bin.hot{background:var(--red);transform:scale(1.2)}
-@media (max-width:879px){ .fab-bin{display:grid} }
 </style>
 
 
@@ -1020,6 +999,7 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
         <div class="card adm" id="aForm">
           <label>Sarlavha<input class="field" id="aTitle" maxlength="120" autocomplete="off"></label>
           <label id="aCatRow" hidden>Turi<select class="field" id="aCat"></select></label>
+          <label id="aSchoolRow">Qaysi maktab uchun<select class="field" id="aSchool"></select></label>
           <label id="aMonthRow" hidden>Oy (filtr uchun)<select class="field" id="aMonth"></select></label>
           <label id="aDateRow" hidden><span id="aDateLbl">Sana</span><input class="field" id="aDate" maxlength="80" autocomplete="off"></label>
           <label>Qisqa matn (kartada ko'rinadi)<input class="field" id="aText" maxlength="160" autocomplete="off" placeholder="Bir-ikki gapda"></label>
@@ -1080,7 +1060,6 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
   </div>
 
   <nav class="tabs" id="tabs" aria-label="Pastki menyu"></nav>
-  <button type="button" class="fab" data-go="savollar" aria-label="Savollar"><svg class="ic" viewBox="6 4 12 16" aria-hidden="true"><path d="M8.6 8.6a3.5 3.5 0 0 1 6.8 1.1c0 2.3-3.4 3-3.4 5"/><line x1="12" y1="18.6" x2="12.01" y2="18.6"/></svg></button>
 </div>
 <div class="modal" id="guestModal" hidden>
   <div class="card adm" role="dialog" aria-modal="true" aria-labelledby="gmT">
@@ -1870,7 +1849,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   ];
   var curView='asosiy';
   function buildNav(){
-    $('#nav').innerHTML=VIEWS.filter(function(v){return v.id!=='arizalar'}).map(function(v){
+    $('#nav').innerHTML=VIEWS.map(function(v){
       return '<button type="button" data-go="'+v.id+'">'+ic(v.icon)+'<span>'+tr(v.label)+'</span></button>';
     }).join('');
     $('#tabs').innerHTML=VIEWS.filter(function(v){return v.tab}).map(function(v){
@@ -1890,12 +1869,10 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   window.__msSetAdmin=function(v){
     v=!!v&&!GUEST; if(v===isAdmin) return; isAdmin=v; syncAdminNav();
     if(!v&&(curView==='admin'||curView==='arizalar')) go('asosiy');
-    if(typeof renderEvents==='function'){ renderEvents(); renderInits(); renderRating(); }
+    if(typeof rebuildAll==='function'){ rebuildAll(); }
   };
   function valid(id){return id==='admin'||VIEWS.some(function(v){return v.id===id})}
-  var pendAps='';
   function show(id){
-    var prev=curView;
     if(!valid(id)) id='asosiy';
     if(id==='profil'&&isAdmin) id='asosiy';
     if((id==='admin'||id==='arizalar')&&!isAdmin){ if(curView!==id&&document.documentElement.classList.contains('authed')) toast(tr("Admin paneliga faqat admin hisobi kira oladi.")); id='asosiy'; try{ location.hash='asosiy'; }catch(e){} }
@@ -1903,9 +1880,9 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     $$('#nav [data-go],#tabs [data-go]').forEach(function(b){
       if(b.getAttribute('data-go')===id) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
     });
-    closeNotes(); closeLang(); closeUser(); curView=id; document.body.setAttribute('data-v',id);
+    closeNotes(); closeLang(); closeUser(); curView=id;
     if(id==='bellashuvlar'||id==='tashabbuslar') refreshApps();
-    if(id==='arizalar'){ if(pendAps){ apSel=pendAps; apFil='all'; } else if(prev!=='arizalar'){ apSel=''; apFil='all'; } renderApps(); }
+    if(id==='arizalar'){ apSel=''; apFil='all'; renderApps(); }
     window.scrollTo(0,0);
   }
   function go(id){
@@ -1942,7 +1919,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       a.push({key:'app:'+p.id+':'+p.status,icon:ok?'star':'bell',go:p.k==='init'?'tashabbuslar':'bellashuvlar',txt:(p.t||'')+': '+tr(ok?'ariza tasdiqlandi. Siz ishtirok etasiz!':'ariza rad etildi.')});
     });
     [['news','Yangi yangilik:','yangiliklar','news'],['events','Yangi bellashuv:','bellashuvlar','trophy'],['inits','Yangi tashabbus:','tashabbuslar','bulb']].forEach(function(x){
-      store[x[0]].forEach(function(p){ c.push({key:x[0]+':'+p.id,ts:p.ts||0,icon:x[3],go:x[2],txt:tr(x[1])+' '+p.title}); });
+      store[x[0]].filter(vis).forEach(function(p){ c.push({key:x[0]+':'+p.id,ts:p.ts||0,icon:x[3],go:x[2],txt:tr(x[1])+' '+p.title}); });
     });
     c.sort(function(x,y){return y.ts-x.ts});
     NOTES=a.concat(c.slice(0,6));
@@ -2054,7 +2031,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     $('#evBox').innerHTML=r.length?r.map(function(e){
       return '<article class="card ev">'+thumb(e)+'<div style="min-width:0"><span class="chip '+e.cls+'">'+tr(e.cat)+'</span><h3>'+e.title+'</h3>'+
         '<div class="when">'+ic('calendar')+'<span>'+locDate(e.date)+'</span></div><p>'+e.text+'</p></div>'+
-        '<div class="act">'+moreBtn(e.id).replace('class="link"','class="pill"')+applyBtn(e,'event')+'</div>'+moreBox(e.id,e.more,e.imgs,e.link)+'</article>';
+        '<div class="act">'+moreBtn(e.id).replace('class="link"','class="pill"')+applyBtn(e)+'</div>'+moreBox(e.id,e.more,e.imgs,e.link)+'</article>';
     }).join(''):'<p class="card empty">'+(EVENTS.length?tr("Bu oyda bellashuvlar yo'q."):tr("Hozircha bellashuvlar yo'q."))+'</p>';
   }
   $('#evMonth').addEventListener('change',renderEvents);
@@ -2068,7 +2045,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       return '<article class="card ev">'+thumb(t)+'<div style="min-width:0"><span class="chip '+t.cls+'">'+tr(t.cat)+'</span><h3>'+t.title+'</h3>'+
         '<div class="when">'+ic('calendar')+'<span>'+t.when+'</span></div><p>'+t.text+'</p></div>'+
         '<div class="act">'+moreBtn(t.id).replace('class="link"','class="pill"')+
-        applyBtn(t,'init')+'</div>'+moreBox(t.id,t.more,t.imgs,t.link)+'</article>';
+        applyBtn(t)+'</div>'+moreBox(t.id,t.more,t.imgs,t.link)+'</article>';
     }).join('');
   }
   $('#tbFilter').addEventListener('click',function(e){
@@ -2280,7 +2257,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   var DEFAULT_SCHOOLS=['33-maktab'];
   function schoolList(){ var s=(store&&store.schools)||[]; return s.length?s:DEFAULT_SCHOOLS; }
   function normKlass(t){
-    var s=String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/\u0410/g,'A').replace(/\u0412/g,'B').replace(/\u0411/g,'B').replace(/SINF|\u041A\u041B\u0410\u0421\u0421|CLASS/g,'').replace(/[\s\-_.:,\u2013\u2014\"'\u00ab\u00bb\u201c\u201d\u2018\u2019`()\[\]{}]+/g,'');
+    var s=String(t||'').toUpperCase().replace(/\u0410/g,'A').replace(/\u0412/g,'B').replace(/\u0411/g,'B').replace(/SINF|\u041A\u041B\u0410\u0421\u0421|CLASS/g,'').replace(/[\s\-_.:,\u2013\u2014\"'\u00ab\u00bb\u201c\u201d\u2018\u2019`]+/g,'');
     var m=/^(\d{1,2})([A-Z])$/.exec(s); return m?m[1]+'-'+m[2]:String(t||'').trim();
   }
   function fillSel(sel,list,curVal){
@@ -2333,7 +2310,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       if(nm) profile.name=nm; if(kl) profile.klass=kl; if(sc) profile.school=sc; if(dv) profile.dob=dv.split('-').reverse().join('.');
       profile.phone=ph; if(pendPhoto!==null) profile.photo=pendPhoto;
       if(!persistProfile()){ profile=JSON.parse(prev); toast(tr('Rasm juda katta. Kichikroq rasm tanlang.')); return; }
-      pendPhoto=null; fillProfile(); renderRating(); setEditing(false); pubAvatar(); toast(tr("Ma'lumotlar saqlandi"));
+      pendPhoto=null; fillProfile(); rebuildAll(); setEditing(false); pubAvatar(); toast(tr("Ma'lumotlar saqlandi"));
     }
     if(ph!==profile.phone&&window.__msClaimPhone&&!isAdmin){
       window.__msClaimPhone(ph,profile.phone).then(function(st){
@@ -2370,7 +2347,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     return (Array.isArray(a)?a:[]).filter(function(x){return x&&typeof x.title==='string'&&typeof x.id==='string'}).map(function(x){
       var cat=String(x.cat||''); cat=cats?(cats.indexOf(cat)>-1?cat:cats[0]):'';
       var mo=String(x.month||''); mo=CFG[type].month?(MONTHS.indexOf(mo)>-1?mo:MONTHS[new Date().getMonth()]):'';
-      return {id:x.id,ts:+x.ts||0,date:String(x.date||''),cat:cat,month:mo,title:String(x.title),text:String(x.text||''),more:String(x.more||''),
+      return {id:x.id,ts:+x.ts||0,school:String(x.school||'').slice(0,40),date:String(x.date||''),cat:cat,month:mo,title:String(x.title),text:String(x.text||''),more:String(x.more||''),
         link:cleanLink(x.link),imgs:(Array.isArray(x.imgs)?x.imgs:[]).filter(function(u){return typeof u==='string'&&u.indexOf('data:image/')===0}).slice(0,6)};
     });
   }
@@ -2384,12 +2361,12 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
   function cleanStudents(a){
     return (Array.isArray(a)?a:[]).filter(function(x){return x&&typeof x.id==='string'&&typeof x.name==='string'&&typeof x.n==='string'&&x.name.trim()}).map(function(x){
-      return {id:x.id.slice(0,24),name:x.name.replace(/\s+/g,' ').trim().slice(0,40),n:normKlass(x.n).slice(0,6)};
+      return {id:x.id.slice(0,24),name:x.name.replace(/\s+/g,' ').trim().slice(0,40),n:normKlass(x.n).slice(0,6),s:String(x.s||'').slice(0,40)};
     });
   }
   function cleanPts(a){
     return (Array.isArray(a)?a:[]).filter(function(x){return x&&typeof x.id==='string'&&(x.t==='s'||x.t==='c')&&typeof x.ref==='string'&&isFinite(+x.v)&&+x.v!==0}).map(function(x){
-      return {id:x.id.slice(0,28),ts:+x.ts||0,t:x.t,ref:(x.t==='c'?normKlass(x.ref):x.ref).slice(0,24),v:Math.max(-1000,Math.min(1000,+x.v)),note:String(x.note||'').slice(0,80)};
+      return {id:x.id.slice(0,28),ts:+x.ts||0,t:x.t,ref:(x.t==='c'?normKlass(x.ref):x.ref).slice(0,24),v:Math.max(-1000,Math.min(1000,+x.v)),note:String(x.note||'').slice(0,80),s:String(x.s||'').slice(0,40)};
     }).slice(-20000);
   }
   function cleanHeroes(d){
@@ -2432,22 +2409,25 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   /* every class that exists (from the fixed list, students and old class points), always in clean "9-A" form */
   function allClasses(){
     var seen={}, out=[];
-    function add(n){ n=normKlass(n).slice(0,6); if(!n||seen[n]||!/^\d{1,2}-[A-Z]$/.test(n)) return; seen[n]=1; out.push({n:n,g:parseInt(n)||0}); }
+    function add(n){ n=normKlass(n).slice(0,6); if(!n||seen[n]) return; seen[n]=1; out.push({n:n,g:parseInt(n)||0}); }
     (store.classes||BASE_CLASSES).forEach(function(c){ add(c.n); });
     store.students.forEach(function(s){ add(s.n); });
     store.pts.forEach(function(e){ if(e.t==='c') add(e.ref); });
     out.sort(function(a,b){ return a.g-b.g||a.n.localeCompare(b.n); });
     return out;
   }
+  /* School isolation: a post/student belongs to one school ('*' = all schools; empty = the default school). Admin sees everything. */
+  function visOf(sc){ if(isAdmin) return true; sc=sc||DEFAULT_SCHOOLS[0]; return sc==='*'||sc===(GUEST?'':profile.school); }
+  function vis(o){ return visOf(o.school); }
   function rebuildAll(){
-    NEWS=store.news.slice().sort(byNew).map(function(p){
+    NEWS=store.news.filter(vis).slice().sort(byNew).map(function(p){
       return {id:'p'+p.id,theme:'school',icon:'news',date:p.date,title:esc(p.title),text:esc(p.text),more:br(p.more),imgs:p.imgs,link:p.link};
     }).concat(BASE_NEWS);
-    EVENTS=store.events.slice().sort(byNew).map(function(p){
+    EVENTS=store.events.filter(vis).slice().sort(byNew).map(function(p){
       var c=EVCAT[p.cat]||EVCAT.Sport;
       return {id:'pe'+p.id,cat:p.cat,cls:c.cls,theme:c.theme,icon:c.icon,month:p.month,title:esc(p.title),date:esc(p.date),text:esc(p.text),more:br(p.more),imgs:p.imgs,link:p.link};
     }).concat(BASE_EVENTS).sort(function(a,b){return MONTHS.indexOf(a.month)-MONTHS.indexOf(b.month)});
-    INITS=store.inits.slice().sort(byNew).map(function(p){
+    INITS=store.inits.filter(vis).slice().sort(byNew).map(function(p){
       var c=ITCAT[p.cat]||ITCAT.Loyiha;
       return {id:'pt'+p.id,cat:p.cat,cls:c.cls,theme:c.theme,icon:c.icon,title:esc(p.title),when:esc(p.date),text:esc(p.text),more:br(p.more),imgs:p.imgs,link:p.link};
     }).concat(BASE_INITS);
@@ -2458,8 +2438,8 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     ms.sort(function(a,b){return MONTHS.indexOf(a)-MONTHS.indexOf(b)});
     sel.innerHTML='<option value="all">'+tr('Barcha sana')+'</option>'+ms.map(function(m){return '<option value="'+m+'">'+mName(m)+'</option>'}).join('');
     sel.value=(keep==='all'||ms.indexOf(keep)>-1)?keep:'all';
-    CLASSES=allClasses(); STUDENTS=store.students; PTS=store.pts; applyHero();
-    renderNews(); renderEvents(); renderInits(); renderRating(); renderAdmin(); renderNotes(); renderFaq();
+    CLASSES=allClasses(); STUDENTS=store.students.filter(function(x){return visOf(x.s)}); PTS=store.pts.filter(function(e){return e.t!=='c'||visOf(e.s)}); applyHero();
+    renderNews(); renderEvents(); renderInits(); renderRating(); fillASchool(); renderAdmin(); renderNotes(); renderFaq();
   }
   // without Firebase, visitors get the published content from news.json (unless this browser has its own copy)
   function loadNewsJson(){
@@ -2486,7 +2466,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(cur==='hero') return renderHeroEditor();
     var l=$('#aList'), arr=store[cur];
     l.innerHTML=arr.length?arr.slice().sort(byNew).map(function(p){
-      var meta=cur==='news'?p.date:(p.cat+' · '+p.date);
+      var meta=(cur==='news'?p.date:(p.cat+' · '+p.date))+' · '+(p.school==='*'?'Hamma maktablar':(p.school||DEFAULT_SCHOOLS[0]));
       return '<div class="card arow"><div><b>'+esc(p.title)+'</b><span class="date">'+esc(meta)+(p.imgs.length?' · '+p.imgs.length+' rasm':'')+'</span></div>'+
         '<div class="act"><button type="button" class="pill" data-aedit="'+p.id+'">Tahrirlash</button><button type="button" class="pill" data-adel="'+p.id+'">O\'chirish</button></div></div>';
     }).join(''):'<p class="card empty">Hali hech narsa qo\'shmadingiz.</p>';
@@ -2507,10 +2487,15 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(ad){ var v=($('#scNew').value||'').trim(); if(!v){ toast('Maktab nomini yozing'); return; } schoolsChange(function(a){ a.push(v); return a; }); toast("Maktab qo'shildi"); }
     else if(dl){ var i=+dl.getAttribute('data-scdel'); if(!confirm("Bu maktabni ro'yxatdan olib tashlaysizmi? Foydalanuvchilarning avvalgi ma'lumoti o'zgarmaydi.")) return; schoolsChange(function(a){ a.splice(i,1); return a; }); }
   });
+  function fillASchool(reset){
+    var sl=$('#aSchool'); if(!sl) return; var v=reset?DEFAULT_SCHOOLS[0]:sl.value;
+    sl.innerHTML=opt('*','Hamma maktablar',false)+schoolList().map(function(x){ return opt(x,x,false); }).join('');
+    sl.value=v; if(sl.value!==v) sl.value=schoolList()[0];
+  }
   function resetDraft(){
     draft={editId:null,imgs:[]};
     ['#aTitle','#aText','#aMore','#aDate','#aLink'].forEach(function(k){ $(k).value=''; });
-    $('#aImgs').value=''; $('#aSave').textContent='Joylash'; $('#aCancel').hidden=true; renderThumbs();
+    $('#aImgs').value=''; fillASchool(true); $('#aSave').textContent='Joylash'; $('#aCancel').hidden=true; renderThumbs();
   }
   function applyType(){
     if(cur==='hero'){
@@ -2586,13 +2571,13 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(c.date&&!date){ toast('Sana yoki jadvalni yozing'); return; }
     var rawL=$('#aLink').value.trim(), link=cleanLink(rawL); if(rawL&&!link){ toast("Havola noto'g'ri. https:// bilan boshlang"); return; }
     if(!text) text=more.length>140?more.slice(0,137)+'...':more;
-    var cat=c.cats?$('#aCat').value:'', month=c.month?$('#aMonth').value:'';
+    var cat=c.cats?$('#aCat').value:'', month=c.month?$('#aMonth').value:'', school=$('#aSchool').value;
     var prev=JSON.stringify(store), editing=draft.editId, arr=store[cur];
     if(editing){
-      arr.forEach(function(p){ if(p.id===editing){ p.title=title; p.text=text; p.more=more; p.imgs=draft.imgs.slice(); p.link=link; p.cat=cat; p.month=month; if(c.date) p.date=date; } });
+      arr.forEach(function(p){ if(p.id===editing){ p.title=title; p.text=text; p.more=more; p.imgs=draft.imgs.slice(); p.link=link; p.cat=cat; p.month=month; p.school=school; if(c.date) p.date=date; } });
     }else{
       var now=new Date();
-      arr.unshift({id:now.getTime().toString(36),ts:now.getTime(),date:c.date?date:fmtDate(now),cat:cat,month:month,title:title,text:text,more:more,imgs:draft.imgs.slice(),link:link});
+      arr.unshift({id:now.getTime().toString(36),ts:now.getTime(),date:c.date?date:fmtDate(now),cat:cat,month:month,title:title,text:text,more:more,imgs:draft.imgs.slice(),link:link,school:school});
     }
     if(!savePosts()){ store=JSON.parse(prev); toast("Xotira to'ldi. Rasmlarni kamaytiring."); return; }
     rebuildAll(); resetDraft();
@@ -2606,6 +2591,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       draft={editId:p.id,imgs:p.imgs.slice()};
       $('#aTitle').value=p.title; $('#aLink').value=p.link||''; $('#aText').value=p.text; $('#aMore').value=p.more; $('#aDate').value=CFG[cur].date?p.date:'';
       if(CFG[cur].cats) $('#aCat').value=p.cat;
+      fillASchool(); $('#aSchool').value=p.school||DEFAULT_SCHOOLS[0];
       if(CFG[cur].month) $('#aMonth').value=p.month;
       $('#aSave').textContent='Yangilash'; $('#aCancel').hidden=false; renderThumbs();
       $('#aTitle').scrollIntoView({behavior:'smooth',block:'center'}); $('#aTitle').focus();
@@ -2697,8 +2683,8 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   var myApps=GUEST?{}:lsGet(MYK), apEv=null, apKind='event';
   function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return d.textContent; }
   function rid(){ return Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(14)),function(b){return (b%36).toString(36)}).join(''); }
-  function applyBtn(e,kind){
-    if(isAdmin) return '<button type="button" class="pill solid" data-aps="'+(kind==='init'?'init':'event')+'|'+e.id+'">'+tr('Arizalar')+'</button>'; // the admin account only publishes; it sees the applications instead
+  function applyBtn(e){
+    if(isAdmin) return ''; // the admin account only publishes; it never takes part
     var a=myApps[e.id];
     if(!a) return '<button type="button" class="pill solid" data-apply="'+e.id+'">'+tr('Ariza topshirish')+'</button>';
     return '<span class="stat '+a.status+'">'+tr(STAT[a.status]||STAT.pending)+'</span>';
@@ -2750,11 +2736,6 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
   $('#evBox').addEventListener('click',function(e){ var b=e.target.closest('[data-apply]'); if(b) openApply('event',b.getAttribute('data-apply')); });
   $('#tbBox').addEventListener('click',function(e){ var b=e.target.closest('[data-apply]'); if(b) openApply('init',b.getAttribute('data-apply')); });
-  function openAps(e){
-    var b=e.target.closest('[data-aps]'); if(!b||!isAdmin) return;
-    pendAps=b.getAttribute('data-aps'); setTimeout(function(){ pendAps=''; },600); go('arizalar');
-  }
-  $('#evBox').addEventListener('click',openAps); $('#tbBox').addEventListener('click',openAps);
   $('#apCancel').addEventListener('click',closeAp);
   $('#apModal').addEventListener('click',function(e){ if(e.target===this) closeAp(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAp(); });
@@ -2831,7 +2812,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function validK(n){ return /^\d{1,2}-[A-Z]$/.test(n); }
   function uCls(u){ var n=normKlass(u.klass); return validK(n)?n:'?'; }
   function uKey(u){ return u.uid||('n:'+normName(u.name)+'|'+u.klass); }
-  function uStu(u){ var c=uCls(u); return STUDENTS.filter(function(s){ return normName(s.name)===normName(u.name)&&s.n===c; })[0]||null; }
+  function uStu(u){ var c=uCls(u); return STUDENTS.filter(function(s){ return normName(s.name)===normName(u.name)&&s.n===c&&(s.s||DEFAULT_SCHOOLS[0])===(u.school||DEFAULT_SCHOOLS[0]); })[0]||null; }
   function uTotal(u){ var s=uStu(u); if(!s) return 0; return Math.round(PTS.reduce(function(t,e){ return t+((e.t==='s'&&e.ref===s.id)?e.v:0); },0)*10)/10; }
   function clsNames(){ var seen={}, o=[]; KLASS_LIST.concat(CLASSES.map(function(c){return c.n;})).forEach(function(n){ if(!seen[n]){ seen[n]=1; o.push(n); } }); o.sort(function(a,b){ return (parseInt(a)||0)-(parseInt(b)||0)||a.localeCompare(b); }); return o; }
   var ruLoaded=false, ruLoading=false, ruFail=false;
@@ -2941,7 +2922,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       var v=numOf(re.pts), note=re.note.trim().slice(0,80); if(!v){ toast('Ballni kiriting'); return; }
       re.pts=''; re.note=''; re.uid='';
       rmut(function(){
-        var s=uStu(u); if(!s){ s={id:uid(),name:u.name.slice(0,40),n:c}; store.students.push(s); }
+        var s=uStu(u); if(!s){ s={id:uid(),name:u.name.slice(0,40),n:c,s:u.school||DEFAULT_SCHOOLS[0]}; store.students.push(s); }
         store.pts.push({id:uid()+'p',ts:Date.now(),t:'s',ref:s.id,v:v,note:note});
       },u.name+': '+(v>0?'+':'')+fmtPts(v)+' ball');
     }
@@ -3197,54 +3178,6 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     var i=a.hasAttribute('data-gal')?(+a.getAttribute('data-gal')||0):0;
     open(l,i);
   });
-})();
-</script>
-
-<script>
-/* Floating button: hold to move it, drop on the bin to hide it until the next reload, tap to open Savollar */
-(function(){
-  var fab=document.querySelector('.fab'); if(!fab) return;
-  var KEY='myschool-fab', S=56, M=8, timer=null, drag=false, sx=0, sy=0, ox=0, oy=0, noClick=false, hot=false;
-  var bin=document.createElement('div'); bin.className='fab-bin'; bin.setAttribute('aria-hidden','true');
-  bin.innerHTML='<svg class="ic" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
-  fab.parentNode.appendChild(bin);
-  function clamp(x,y){ return [Math.max(M,Math.min(window.innerWidth-S-M,x)), Math.max(M+8,Math.min(window.innerHeight-S-M,y))]; }
-  function put(x,y){ var c=clamp(x,y); fab.style.left=c[0]+'px'; fab.style.top=c[1]+'px'; fab.style.right='auto'; fab.style.bottom='auto'; return c; }
-  function load(){
-    try{ var v=JSON.parse(localStorage.getItem(KEY)); if(v&&isFinite(v.x)&&isFinite(v.y)) put(v.x*(window.innerWidth-S),v.y*(window.innerHeight-S)); }catch(e){}
-  }
-  function save(x,y){ try{ localStorage.setItem(KEY,JSON.stringify({x:x/(window.innerWidth-S),y:y/(window.innerHeight-S)})); }catch(e){} }
-  function overBin(){
-    var a=fab.getBoundingClientRect(), b=bin.getBoundingClientRect();
-    var dx=(a.left+a.width/2)-(b.left+b.width/2), dy=(a.top+a.height/2)-(b.top+b.height/2);
-    return Math.sqrt(dx*dx+dy*dy)<62;
-  }
-  fab.addEventListener('contextmenu',function(e){ e.preventDefault(); });
-  fab.addEventListener('pointerdown',function(e){
-    if(e.button>0) return;
-    var r=fab.getBoundingClientRect(); sx=e.clientX; sy=e.clientY; ox=r.left; oy=r.top; drag=false;
-    try{ fab.setPointerCapture(e.pointerId); }catch(x){}
-    clearTimeout(timer);
-    timer=setTimeout(function(){ drag=true; fab.classList.add('drag'); bin.classList.add('show'); try{ navigator.vibrate&&navigator.vibrate(18); }catch(x){} },350);
-  });
-  fab.addEventListener('pointermove',function(e){
-    if(!drag){ if(timer&&(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10)){ clearTimeout(timer); timer=null; } return; }
-    e.preventDefault(); put(ox+e.clientX-sx,oy+e.clientY-sy);
-    var h=overBin(); if(h!==hot){ hot=h; bin.classList.toggle('hot',h); fab.classList.toggle('over',h); if(h){ try{ navigator.vibrate&&navigator.vibrate(12); }catch(x){} } }
-  });
-  function end(){
-    clearTimeout(timer); timer=null;
-    if(drag){
-      noClick=true; setTimeout(function(){ noClick=false; },80);
-      if(hot){ fab.classList.add('gone'); } /* hidden only until the site is reloaded or opened again */
-      else{ var r=fab.getBoundingClientRect(); save(r.left,r.top); }
-    }
-    drag=false; hot=false; fab.classList.remove('drag','over'); bin.classList.remove('show','hot');
-  }
-  fab.addEventListener('pointerup',end); fab.addEventListener('pointercancel',end);
-  fab.addEventListener('click',function(e){ if(noClick){ e.stopPropagation(); e.preventDefault(); } },true);
-  window.addEventListener('resize',load);
-  load();
 })();
 </script>
 
