@@ -2371,7 +2371,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
   function cleanHeroes(d){
     var a=Array.isArray(d.heroes)?d.heroes:(typeof d.hero==='string'&&d.hero?[d.hero]:[]); // older files held one picture in "hero"
-    return a.filter(function(u){return typeof u==='string'&&u.indexOf('data:image/')===0}).slice(0,5);
+    return a.map(function(h){ return typeof h==='string'?{u:h,s:''}:(h&&typeof h==='object'?{u:h.u,s:String(h.s||'').slice(0,40)}:null); }).filter(function(h){return h&&typeof h.u==='string'&&h.u.indexOf('data:image/')===0}).slice(0,60);
   }
   function cleanFaq(a){
     if(!Array.isArray(a)) return null; var LL=['uz','ru','en','kk'];
@@ -3049,6 +3049,9 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
 
 /* ---------- Admin: main page pictures (slideshow, up to 5) ---------- */
+  var heroSch=DEFAULT_SCHOOLS[0];
+  function heroSchoolOpts(){ return opt('*','Hamma maktablar',heroSch==='*')+schoolList().map(function(x){ return opt(x,x,x===heroSch); }).join(''); }
+  function heroOf(h){ return (h.s||DEFAULT_SCHOOLS[0])===heroSch; }
   var heroDraft=[], heroTimer=null, heroIdx=0, HERO_MAX=5;
   function goSlide(i){
     var im=$$('#heroSlides img'), dt=$$('#heroSlides .hero-dots button'); if(!im.length) return;
@@ -3059,12 +3062,12 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function stopHero(){ clearInterval(heroTimer); heroTimer=null; }
   function startHero(){
     stopHero();
-    if(store.heroes.length<2||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    if($$('#heroSlides img').length<2||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
     heroTimer=setInterval(function(){ goSlide(heroIdx+1); },4500);
   }
   function applyHero(){
     applyHeroText();
-    var list=store.heroes, box=$('#heroSlides'), sv=$('.hero-art');
+    var list=store.heroes.filter(function(h){return visOf(h.s)}).map(function(h){return h.u}), box=$('#heroSlides'), sv=$('.hero-art');
     stopHero(); heroIdx=0;
     if(!list.length){ box.hidden=true; box.innerHTML=''; sv.style.display=''; return; }
     box.innerHTML=list.map(function(u,i){ return '<img src="'+u+'" alt=""'+(i?'':' class="on"')+'>'; }).join('')+
@@ -3080,14 +3083,15 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function drawHeroEditor(){
     if($('#aList [data-ht]')) htDraft=grabHt();
     var full=heroDraft.length>=HERO_MAX;
-    $('#aList').innerHTML=htCard()+'<div class="card adm"><p class="hint">Bosh sahifa uchun '+HERO_MAX+' tagacha rasm qo\'shing. Bir nechta bo\'lsa, ular o\'zi almashib turadi. Rasm bo\'lmasa, standart rasm ko\'rinadi.</p>'+
+    $('#aList').innerHTML=htCard()+'<div class="card adm"><label>Qaysi maktab uchun<select class="field" id="hSchool">'+heroSchoolOpts()+'</select></label><p class="hint">Bosh sahifa uchun '+HERO_MAX+' tagacha rasm qo\'shing. Bir nechta bo\'lsa, ular o\'zi almashib turadi. Rasm bo\'lmasa, standart rasm ko\'rinadi.</p>'+
       '<div class="thumbs" id="hThumbs">'+heroDraft.map(function(u,i){
         return '<div class="thumb"><img src="'+u+'" alt=""><button type="button" data-hrm="'+i+'" aria-label="Rasmni olib tashlash">×</button></div>';
       }).join('')+'</div>'+
       (full?'<p class="hint">'+HERO_MAX+' ta rasm qo\'shildi. Yangisini qo\'shish uchun avval bittasini olib tashlang.</p>':'<label>Rasm qo\'shish ('+heroDraft.length+'/'+HERO_MAX+')<input type="file" id="hFile" accept="image/*" multiple></label>')+
       '<div class="adm-btns"><button type="button" class="btn" id="hSave">Saqlash</button><button type="button" class="btn ghost" id="hReset">Standart rasmga qaytish</button></div></div>';
   }
-  function renderHeroEditor(){ heroDraft=store.heroes.slice(); drawHeroEditor(); }
+  function renderHeroEditor(){ heroDraft=store.heroes.filter(heroOf).map(function(h){return h.u}); drawHeroEditor(); }
+  $('#aList').addEventListener('change',function(e){ if(cur==='hero'&&e.target.id==='hSchool'){ heroSch=e.target.value; renderHeroEditor(); } });
   $('#aList').addEventListener('change',function(e){
     if(cur!=='hero'||e.target.id!=='hFile'||!e.target.files.length) return;
     var files=Array.prototype.slice.call(e.target.files).slice(0,HERO_MAX-heroDraft.length);
@@ -3109,7 +3113,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     var sv=e.target.closest('#hSave'), rs=e.target.closest('#hReset');
     if(!sv&&!rs) return;
     if(sv&&!heroDraft.length){ toast('Avval rasm qo\'shing'); return; }
-    var prev=JSON.stringify(store); store.heroes=sv?heroDraft.slice():[];
+    var prev=JSON.stringify(store); store.heroes=store.heroes.filter(function(h){return !heroOf(h)}).concat(sv?heroDraft.map(function(u){return {u:u,s:heroSch}}):[]);
     if(!savePosts()){ store=JSON.parse(prev); toast("Xotira to'ldi. Kamroq yoki kichikroq rasm tanlang."); return; }
     rebuildAll(); if(!FB.url) toast(sv?'Bosh sahifa rasmlari saqlandi (faqat shu brauzerda)':'Standart rasm qaytarildi');
   });
