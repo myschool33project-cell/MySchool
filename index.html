@@ -2345,7 +2345,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   // an application whose event/initiative was deleted disappears for the user (list, button status and notification)
   function purgeApps(){
     var ch=false; Object.keys(myApps).forEach(function(k){ if(!exists(myApps[k].k,k)){ delete myApps[k]; ch=true; } });
-    if(ch) lsSet('myschool-myapps',myApps);
+    if(ch) lsSet(MYK,myApps);
     if(!FB.url){ var m=lsGet('myschool-apps'), c2=false; Object.keys(m).forEach(function(id){ if(!exists(m[id].kind,m[id].evId)){ delete m[id]; c2=true; } }); if(c2) lsSet('myschool-apps',m); }
   }
   function br(t){return esc(t).replace(/\n/g,'<br>')}
@@ -2614,7 +2614,8 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     }
   };
   var STAT={pending:'Kutilmoqda',approved:'Tasdiqlandi',rejected:'Rad etildi'};
-  var myApps=GUEST?{}:lsGet('myschool-myapps'), apEv=null, apKind='event';
+  var MYK='myschool-myapps-'+(function(){ try{ return localStorage.getItem('myschool-uid')||'none'; }catch(e){ return 'none'; } })();
+  var myApps=GUEST?{}:lsGet(MYK), apEv=null, apKind='event';
   function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return d.textContent; }
   function rid(){ return Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(14)),function(b){return (b%36).toString(36)}).join(''); }
   function applyBtn(e){
@@ -2630,7 +2631,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       if(a&&STAT[a.status]&&a.status!==myApps[k].status){ myApps[k].status=a.status; if(a.status!=='pending'&&(!contentLoaded||exists(myApps[k].k,k))) changed.push(myApps[k]); }
     }).catch(function(){}); }))
       .then(function(){
-        lsSet('myschool-myapps',myApps); renderEvents(); renderInits(); appNotes();
+        lsSet(MYK,myApps); renderEvents(); renderInits(); appNotes();
         if(changed.length){ var c=changed[0]; toast((c.t||'')+': '+tr(c.status==='approved'?'ariza tasdiqlandi. Siz ishtirok etasiz!':'ariza rad etildi.')); }
       });
   }
@@ -2680,7 +2681,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     var a={id:rid(),kind:apKind,evId:apEv.id,evTitle:plain(apEv.title),name:n,klass:k,phone:ph,note:$('#apNote').value.trim(),status:'pending',ts:Date.now()};
     btn.disabled=true;
     Promise.resolve().then(function(){ return DB.create(a); }).then(function(){
-      myApps[a.evId]={id:a.id,status:'pending',t:a.evTitle,k:a.kind}; lsSet('myschool-myapps',myApps);
+      myApps[a.evId]={id:a.id,status:'pending',t:a.evTitle,k:a.kind}; lsSet(MYK,myApps);
       closeAp(); renderEvents(); renderInits(); toast(tr('Ariza yuborildi. Admin tasdiqlashini kuting.'));
     }).catch(function(){ toast(tr("Yuborib bo'lmadi. Keyinroq urinib ko'ring.")); }).then(function(){ btn.disabled=false; });
   });
