@@ -702,6 +702,27 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
 #gate .g-apple:hover{border-color:var(--blue)}
 :root[data-theme="dark"] #gate .g-apple{background:#fff;border-color:#fff;color:#000}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #gate .g-apple{background:#fff;border-color:#fff;color:#000}}
+
+/* Floating "Savollar" button (phones) */
+.fab{display:none;position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:24;width:56px;height:56px;border:0;border-radius:50%;background:var(--blue);color:#fff;place-items:center;padding:0;box-shadow:0 8px 22px rgba(42,99,230,.4)}
+.fab .ic{width:26px;height:30px;stroke-width:2.6}
+.fab:active{transform:scale(.94)}
+:root[data-theme="dark"] .fab{background:#3b6fe0;color:#fff}
+@media (max-width:879px){
+  .fab{display:grid}
+  body[data-v="savollar"] .fab,body[data-v="admin"] .fab,body[data-v="arizalar"] .fab{display:none}
+}
+.fab{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;transition:transform .15s,box-shadow .15s}
+.fab.drag{transform:scale(1.18);box-shadow:0 14px 34px rgba(42,99,230,.55);transition:none}
+.fab{z-index:26}
+.fab.drag{z-index:28}
+.fab.over{transform:scale(.8)}
+.fab.gone{display:none!important}
+.fab-bin{display:none;position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:27;width:64px;height:64px;margin-left:-32px;border-radius:50%;background:rgba(20,28,56,.82);color:#fff;place-items:center;opacity:0;transform:translateY(30px) scale(.8);pointer-events:none;transition:opacity .2s,transform .2s,background .2s}
+.fab-bin .ic{width:28px;height:28px}
+.fab-bin.show{opacity:1;transform:none}
+.fab-bin.hot{background:var(--red);transform:scale(1.2)}
+@media (max-width:879px){ .fab-bin{display:grid} }
 </style>
 
 
@@ -1059,6 +1080,7 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
   </div>
 
   <nav class="tabs" id="tabs" aria-label="Pastki menyu"></nav>
+  <button type="button" class="fab" data-go="savollar" aria-label="Savollar"><svg class="ic" viewBox="6 4 12 16" aria-hidden="true"><path d="M8.6 8.6a3.5 3.5 0 0 1 6.8 1.1c0 2.3-3.4 3-3.4 5"/><line x1="12" y1="18.6" x2="12.01" y2="18.6"/></svg></button>
 </div>
 <div class="modal" id="guestModal" hidden>
   <div class="card adm" role="dialog" aria-modal="true" aria-labelledby="gmT">
@@ -1879,7 +1901,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     $$('#nav [data-go],#tabs [data-go]').forEach(function(b){
       if(b.getAttribute('data-go')===id) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
     });
-    closeNotes(); closeLang(); closeUser(); curView=id;
+    closeNotes(); closeLang(); closeUser(); curView=id; document.body.setAttribute('data-v',id);
     if(id==='bellashuvlar'||id==='tashabbuslar') refreshApps();
     if(id==='arizalar'){ apSel=''; apFil='all'; renderApps(); }
     window.scrollTo(0,0);
@@ -3168,6 +3190,54 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     var i=a.hasAttribute('data-gal')?(+a.getAttribute('data-gal')||0):0;
     open(l,i);
   });
+})();
+</script>
+
+<script>
+/* Floating button: hold to move it, drop on the bin to hide it until the next reload, tap to open Savollar */
+(function(){
+  var fab=document.querySelector('.fab'); if(!fab) return;
+  var KEY='myschool-fab', S=56, M=8, timer=null, drag=false, sx=0, sy=0, ox=0, oy=0, noClick=false, hot=false;
+  var bin=document.createElement('div'); bin.className='fab-bin'; bin.setAttribute('aria-hidden','true');
+  bin.innerHTML='<svg class="ic" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+  fab.parentNode.appendChild(bin);
+  function clamp(x,y){ return [Math.max(M,Math.min(window.innerWidth-S-M,x)), Math.max(M+8,Math.min(window.innerHeight-S-M,y))]; }
+  function put(x,y){ var c=clamp(x,y); fab.style.left=c[0]+'px'; fab.style.top=c[1]+'px'; fab.style.right='auto'; fab.style.bottom='auto'; return c; }
+  function load(){
+    try{ var v=JSON.parse(localStorage.getItem(KEY)); if(v&&isFinite(v.x)&&isFinite(v.y)) put(v.x*(window.innerWidth-S),v.y*(window.innerHeight-S)); }catch(e){}
+  }
+  function save(x,y){ try{ localStorage.setItem(KEY,JSON.stringify({x:x/(window.innerWidth-S),y:y/(window.innerHeight-S)})); }catch(e){} }
+  function overBin(){
+    var a=fab.getBoundingClientRect(), b=bin.getBoundingClientRect();
+    var dx=(a.left+a.width/2)-(b.left+b.width/2), dy=(a.top+a.height/2)-(b.top+b.height/2);
+    return Math.sqrt(dx*dx+dy*dy)<62;
+  }
+  fab.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+  fab.addEventListener('pointerdown',function(e){
+    if(e.button>0) return;
+    var r=fab.getBoundingClientRect(); sx=e.clientX; sy=e.clientY; ox=r.left; oy=r.top; drag=false;
+    try{ fab.setPointerCapture(e.pointerId); }catch(x){}
+    clearTimeout(timer);
+    timer=setTimeout(function(){ drag=true; fab.classList.add('drag'); bin.classList.add('show'); try{ navigator.vibrate&&navigator.vibrate(18); }catch(x){} },350);
+  });
+  fab.addEventListener('pointermove',function(e){
+    if(!drag){ if(timer&&(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10)){ clearTimeout(timer); timer=null; } return; }
+    e.preventDefault(); put(ox+e.clientX-sx,oy+e.clientY-sy);
+    var h=overBin(); if(h!==hot){ hot=h; bin.classList.toggle('hot',h); fab.classList.toggle('over',h); if(h){ try{ navigator.vibrate&&navigator.vibrate(12); }catch(x){} } }
+  });
+  function end(){
+    clearTimeout(timer); timer=null;
+    if(drag){
+      noClick=true; setTimeout(function(){ noClick=false; },80);
+      if(hot){ fab.classList.add('gone'); } /* hidden only until the site is reloaded or opened again */
+      else{ var r=fab.getBoundingClientRect(); save(r.left,r.top); }
+    }
+    drag=false; hot=false; fab.classList.remove('drag','over'); bin.classList.remove('show','hot');
+  }
+  fab.addEventListener('pointerup',end); fab.addEventListener('pointercancel',end);
+  fab.addEventListener('click',function(e){ if(noClick){ e.stopPropagation(); e.preventDefault(); } },true);
+  window.addEventListener('resize',load);
+  load();
 })();
 </script>
 
