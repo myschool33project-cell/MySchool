@@ -1870,7 +1870,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   ];
   var curView='asosiy';
   function buildNav(){
-    $('#nav').innerHTML=VIEWS.map(function(v){
+    $('#nav').innerHTML=VIEWS.filter(function(v){return v.id!=='arizalar'}).map(function(v){
       return '<button type="button" data-go="'+v.id+'">'+ic(v.icon)+'<span>'+tr(v.label)+'</span></button>';
     }).join('');
     $('#tabs').innerHTML=VIEWS.filter(function(v){return v.tab}).map(function(v){
@@ -2052,7 +2052,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     $('#evBox').innerHTML=r.length?r.map(function(e){
       return '<article class="card ev">'+thumb(e)+'<div style="min-width:0"><span class="chip '+e.cls+'">'+tr(e.cat)+'</span><h3>'+e.title+'</h3>'+
         '<div class="when">'+ic('calendar')+'<span>'+locDate(e.date)+'</span></div><p>'+e.text+'</p></div>'+
-        '<div class="act">'+moreBtn(e.id).replace('class="link"','class="pill"')+applyBtn(e)+'</div>'+moreBox(e.id,e.more,e.imgs,e.link)+'</article>';
+        '<div class="act">'+moreBtn(e.id).replace('class="link"','class="pill"')+applyBtn(e,'event')+'</div>'+moreBox(e.id,e.more,e.imgs,e.link)+'</article>';
     }).join(''):'<p class="card empty">'+(EVENTS.length?tr("Bu oyda bellashuvlar yo'q."):tr("Hozircha bellashuvlar yo'q."))+'</p>';
   }
   $('#evMonth').addEventListener('change',renderEvents);
@@ -2066,7 +2066,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       return '<article class="card ev">'+thumb(t)+'<div style="min-width:0"><span class="chip '+t.cls+'">'+tr(t.cat)+'</span><h3>'+t.title+'</h3>'+
         '<div class="when">'+ic('calendar')+'<span>'+t.when+'</span></div><p>'+t.text+'</p></div>'+
         '<div class="act">'+moreBtn(t.id).replace('class="link"','class="pill"')+
-        applyBtn(t)+'</div>'+moreBox(t.id,t.more,t.imgs,t.link)+'</article>';
+        applyBtn(t,'init')+'</div>'+moreBox(t.id,t.more,t.imgs,t.link)+'</article>';
     }).join('');
   }
   $('#tbFilter').addEventListener('click',function(e){
@@ -2695,8 +2695,8 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   var myApps=GUEST?{}:lsGet(MYK), apEv=null, apKind='event';
   function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return d.textContent; }
   function rid(){ return Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(14)),function(b){return (b%36).toString(36)}).join(''); }
-  function applyBtn(e){
-    if(isAdmin) return ''; // the admin account only publishes; it never takes part
+  function applyBtn(e,kind){
+    if(isAdmin) return '<button type="button" class="pill solid" data-aps="'+(kind==='init'?'init':'event')+'|'+e.id+'">'+tr('Arizalar')+'</button>'; // the admin account only publishes; it sees the applications instead
     var a=myApps[e.id];
     if(!a) return '<button type="button" class="pill solid" data-apply="'+e.id+'">'+tr('Ariza topshirish')+'</button>';
     return '<span class="stat '+a.status+'">'+tr(STAT[a.status]||STAT.pending)+'</span>';
@@ -2748,6 +2748,11 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
   $('#evBox').addEventListener('click',function(e){ var b=e.target.closest('[data-apply]'); if(b) openApply('event',b.getAttribute('data-apply')); });
   $('#tbBox').addEventListener('click',function(e){ var b=e.target.closest('[data-apply]'); if(b) openApply('init',b.getAttribute('data-apply')); });
+  function openAps(e){
+    var b=e.target.closest('[data-aps]'); if(!b||!isAdmin) return;
+    var k=b.getAttribute('data-aps'); go('arizalar'); apSel=k; apFil='all';
+  }
+  $('#evBox').addEventListener('click',openAps); $('#tbBox').addEventListener('click',openAps);
   $('#apCancel').addEventListener('click',closeAp);
   $('#apModal').addEventListener('click',function(e){ if(e.target===this) closeAp(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAp(); });
