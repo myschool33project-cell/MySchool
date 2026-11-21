@@ -1893,7 +1893,9 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(typeof renderEvents==='function'){ renderEvents(); renderInits(); renderRating(); }
   };
   function valid(id){return id==='admin'||VIEWS.some(function(v){return v.id===id})}
+  var pendAps='';
   function show(id){
+    var prev=curView;
     if(!valid(id)) id='asosiy';
     if(id==='profil'&&isAdmin) id='asosiy';
     if((id==='admin'||id==='arizalar')&&!isAdmin){ if(curView!==id&&document.documentElement.classList.contains('authed')) toast(tr("Admin paneliga faqat admin hisobi kira oladi.")); id='asosiy'; try{ location.hash='asosiy'; }catch(e){} }
@@ -1903,7 +1905,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     });
     closeNotes(); closeLang(); closeUser(); curView=id; document.body.setAttribute('data-v',id);
     if(id==='bellashuvlar'||id==='tashabbuslar') refreshApps();
-    if(id==='arizalar'){ apSel=''; apFil='all'; renderApps(); }
+    if(id==='arizalar'){ if(pendAps){ apSel=pendAps; apFil='all'; } else if(prev!=='arizalar'){ apSel=''; apFil='all'; } renderApps(); }
     window.scrollTo(0,0);
   }
   function go(id){
@@ -2750,7 +2752,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   $('#tbBox').addEventListener('click',function(e){ var b=e.target.closest('[data-apply]'); if(b) openApply('init',b.getAttribute('data-apply')); });
   function openAps(e){
     var b=e.target.closest('[data-aps]'); if(!b||!isAdmin) return;
-    var k=b.getAttribute('data-aps'); go('arizalar'); apSel=k; apFil='all';
+    pendAps=b.getAttribute('data-aps'); setTimeout(function(){ pendAps=''; },600); go('arizalar');
   }
   $('#evBox').addEventListener('click',openAps); $('#tbBox').addEventListener('click',openAps);
   $('#apCancel').addEventListener('click',closeAp);
