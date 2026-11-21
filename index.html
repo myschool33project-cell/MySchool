@@ -2280,7 +2280,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   var DEFAULT_SCHOOLS=['33-maktab'];
   function schoolList(){ var s=(store&&store.schools)||[]; return s.length?s:DEFAULT_SCHOOLS; }
   function normKlass(t){
-    var s=String(t||'').toUpperCase().replace(/\u0410/g,'A').replace(/\u0412/g,'B').replace(/\u0411/g,'B').replace(/SINF|\u041A\u041B\u0410\u0421\u0421|CLASS/g,'').replace(/[\s\-_.:,\u2013\u2014\"'\u00ab\u00bb\u201c\u201d\u2018\u2019`]+/g,'');
+    var s=String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/\u0410/g,'A').replace(/\u0412/g,'B').replace(/\u0411/g,'B').replace(/SINF|\u041A\u041B\u0410\u0421\u0421|CLASS/g,'').replace(/[\s\-_.:,\u2013\u2014\"'\u00ab\u00bb\u201c\u201d\u2018\u2019`()\[\]{}]+/g,'');
     var m=/^(\d{1,2})([A-Z])$/.exec(s); return m?m[1]+'-'+m[2]:String(t||'').trim();
   }
   function fillSel(sel,list,curVal){
@@ -2432,7 +2432,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   /* every class that exists (from the fixed list, students and old class points), always in clean "9-A" form */
   function allClasses(){
     var seen={}, out=[];
-    function add(n){ n=normKlass(n).slice(0,6); if(!n||seen[n]) return; seen[n]=1; out.push({n:n,g:parseInt(n)||0}); }
+    function add(n){ n=normKlass(n).slice(0,6); if(!n||seen[n]||!/^\d{1,2}-[A-Z]$/.test(n)) return; seen[n]=1; out.push({n:n,g:parseInt(n)||0}); }
     (store.classes||BASE_CLASSES).forEach(function(c){ add(c.n); });
     store.students.forEach(function(s){ add(s.n); });
     store.pts.forEach(function(e){ if(e.t==='c') add(e.ref); });
