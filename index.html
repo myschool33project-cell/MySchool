@@ -723,6 +723,12 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
 .fab-bin.show{opacity:1;transform:none}
 .fab-bin.hot{background:var(--red);transform:scale(1.2)}
 @media (max-width:879px){ .fab-bin{display:grid} }
+/* admin profile: only school + email are shown */
+.prof-card.adm .fact:not(.keep){display:none}
+.prof-card.adm .klass,.prof-card.adm #in-name{display:none!important}
+.prof-card.adm .av-ctl{display:none!important}
+.prof-card.adm.editing h2.v{display:block}
+.prof-card:not(.adm) #pfTagAdm,.prof-card.adm .tag:not(#pfTagAdm){display:none}
 </style>
 
 
@@ -755,17 +761,20 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
           <button type="button" class="g-google" id="gGoogle"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span data-g="google"></span></button>
           <button type="button" class="g-google g-apple" id="gApple"><svg width="17" height="20" viewBox="0 0 384 512" aria-hidden="true" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg><span data-g="apple"></span></button>
           <p class="g-note" data-g="need_google"></p>
-          <div class="g-or"><span data-g="or_email"></span></div>
-          <form id="fEmail" novalidate>
-            <input type="email" id="eMail" data-gph="email" autocomplete="email" inputmode="email" maxlength="120">
-            <input type="password" id="ePass" data-gph="password" autocomplete="current-password" maxlength="60">
-            <button type="submit" class="g-primary" id="gEmailIn" data-g="signin"></button>
-            <div class="g-row" style="justify-content:space-between;margin-top:6px"><button type="button" class="g-text" id="gEmailUp" data-g="signup"></button><button type="button" class="g-text" id="gReset" data-g="forgot"></button></div>
-          </form>
           <div class="g-or"><span data-g="or"></span></div>
           <button type="button" class="g-guest" id="gGuest" data-g="guest"></button>
           <p class="g-note" data-g="guest_note"></p>
           <p class="g-msg" id="gMsg1" role="alert"></p>
+        </section>
+        <section id="gAdmin" hidden>
+          <div class="g-acc"><span class="g-acc-av" id="gAdmAv"></span><div><b id="gAdmName"></b><small id="gAdmMail"></small></div><button type="button" class="g-text" id="gAdmSwitch" data-g="switch"></button></div>
+          <h2 data-g="adm_t"></h2>
+          <p class="g-sub" data-g="adm_p"></p>
+          <form id="fAdmin" novalidate>
+            <select id="aSch" aria-label="Maktab"></select>
+            <button type="submit" class="g-primary" data-g="enter"></button>
+            <p class="g-msg" id="gMsg4" role="alert"></p>
+          </form>
         </section>
         <section id="gInfo" hidden>
           <div class="g-acc"><span class="g-acc-av" id="gAccAv"></span><div><b id="gAccName"></b><small id="gAccMail"></small></div><button type="button" class="g-text" id="gSwitch" data-g="switch"></button></div>
@@ -1014,9 +1023,9 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
           <button type="button" data-atype="events" aria-pressed="false">Bellashuvlar</button>
           <button type="button" data-atype="inits" aria-pressed="false">Tashabbuslar</button>
           <button type="button" data-atype="rating" aria-pressed="false">Reyting</button>
-          <button type="button" data-atype="hero" aria-pressed="false">Bosh sahifa</button>
+          <button type="button" data-owner data-atype="hero" aria-pressed="false">Bosh sahifa</button>
           <button type="button" data-atype="users" aria-pressed="false">Foydalanuvchilar</button>
-          <button type="button" data-atype="schools" aria-pressed="false">Maktablar</button>
+          <button type="button" data-owner data-atype="schools" aria-pressed="false">Maktablar</button>
         </div>
         <div class="card adm" id="aForm">
           <label>Maktab<select class="field" id="aSchool"></select></label>
@@ -1061,16 +1070,16 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
               <h2 class="v" data-pf="name">Foydalanuvchi</h2>
               <input class="field e" id="in-name" aria-label="Ism" autocomplete="off" maxlength="60">
               <p class="klass"><span data-pf="klass">9-A</span> sinf</p>
-              <span class="tag">O'quvchi</span>
+              <span class="tag">O'quvchi</span><span class="tag" id="pfTagAdm">Admin</span>
               <div class="av-ctl"><label class="btn ghost small" for="pfPhoto"><span data-ic="camera"></span><span>Fotosuratni o'zgartirish</span></label><input class="vh" type="file" id="pfPhoto" accept="image/*"><button type="button" class="btn ghost small" id="pfPhotoRm">Olib tashlash</button></div>
             </div>
           </div>
           <div class="facts">
             <div class="fact"><span class="tile" data-ic="trophy"></span><div><small>Sinf</small><b class="v" data-pf="klass">9-A</b><select class="field e" id="in-klass" aria-label="Sinf"></select></div></div>
-            <div class="fact"><span class="tile" data-ic="building"></span><div><small>Maktab</small><b class="v" data-pf="school">1-son maktab</b><select class="field e" id="in-school" aria-label="Maktab"></select></div></div>
+            <div class="fact keep"><span class="tile" data-ic="building"></span><div><small>Maktab</small><b class="v" data-pf="school">1-son maktab</b><select class="field e" id="in-school" aria-label="Maktab"></select></div></div>
             <div class="fact"><span class="tile" data-ic="calendar"></span><div><small>Tug'ilgan sana</small><b class="v" data-pf="dob">12.03.2010</b><input class="field e" id="in-dob" type="date" aria-label="Tug'ilgan sana" min="1980-01-01"></div></div>
             <div class="fact"><span class="tile" data-ic="phone"></span><div><small>Telefon raqami</small><b class="v" data-pf="phone">—</b><input class="field e" id="in-phone" type="tel" aria-label="Telefon raqami" autocomplete="off" maxlength="20"></div></div>
-            <div class="fact wide"><span class="tile" data-ic="mail"></span><div><small>Email</small><b data-pf="email">—</b></div></div>
+            <div class="fact wide keep"><span class="tile" data-ic="mail"></span><div><small>Email</small><b data-pf="email">—</b></div></div>
           </div>
         </div>
         <div class="card banner">
@@ -1150,11 +1159,19 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     kk:{or_email:'немесе email арқылы',email:'Email',password:'Құпия сөз (кемінде 6 таңба)',signin:'Кіру',signup:'Тіркелу',forgot:'Құпия сөзді ұмыттыңыз ба?',wrongcred:'Email немесе құпия сөз қате',emailinuse:'Бұл email тіркелген. «Кіру» түймесін басыңыз',weakpw:'Құпия сөз тым қысқа (кемінде 6 таңба)',needboth:'Email мен құпия сөзді енгізіңіз',resetsent:'Құпия сөзді қалпына келтіру хаты жіберілді. Поштаңызды тексеріңіз',resetneed:'Алдымен email жазыңыз'}
   };
   Object.keys(GX).forEach(function(l){ Object.assign(G[l],GX[l]); });
+  var GA={
+    uz:{adm_t:'Admin profili',adm_p:"Hisobingiz orqali kirdingiz. Faqat maktabingizni tanlang: siz joylagan e'lonlar shu maktabga tegishli bo'ladi.",adm_all:'Barcha maktablar (bosh admin)'},
+    ru:{adm_t:'Профиль администратора',adm_p:'Вы вошли через свой аккаунт. Выберите только свою школу: все ваши публикации будут относиться к ней.',adm_all:'Все школы (главный админ)'},
+    en:{adm_t:'Admin profile',adm_p:'You are signed in. Just choose your school: everything you publish will belong to it.',adm_all:'All schools (main admin)'},
+    kk:{adm_t:'Әкімші профилі',adm_p:'Аккаунтыңызбен кірдіңіз. Тек мектебіңізді таңдаңыз: жарияланымдарыңыз сол мектепке тиесілі болады.',adm_all:'Барлық мектептер (бас әкімші)'}
+  };
+  Object.keys(GA).forEach(function(l){ Object.assign(G[l],GA[l]); });
   var S=G.uz, gate=$('#gate'), cur=null;
   /* Guest mode: browse only (no applying, no own profile/rating, never admin). Lives for this tab only. */
   /* The ONE admin account. Change it here AND in the Firebase Realtime Database rules (the rules are the real protection). */
-  var ADMIN_EMAIL='myschool33.project@gmail.com';
-  function isAdminUser(u){ return !demo&&!!u&&u.emailVerified!==false&&String(u.email||'').trim().toLowerCase()===ADMIN_EMAIL; }
+  var ADMIN_EMAILS=['myschool33.project@gmail.com']; /* add more admin emails here (and in the Firebase rules). The FIRST one is the main admin: it can post to all schools. Every other admin is tied to ONE school. */
+  function isAdminUser(u){ return !demo&&!!u&&u.emailVerified!==false&&ADMIN_EMAILS.indexOf(String(u.email||'').trim().toLowerCase())>-1; }
+  function isOwnerUser(u){ return isAdminUser(u)&&String(u.email||'').trim().toLowerCase()===ADMIN_EMAILS[0]; }
   function setAdmin(v){ window.__msAdminFlag=!!v; if(window.__msSetAdmin) window.__msSetAdmin(!!v); }
   var guestMode=false; try{ guestMode=sessionStorage.getItem('myschool-guest')==='1'; }catch(e){}
   function enterGuest(){ cur=null; root.classList.add('authed'); gate.hidden=true; }
@@ -1170,6 +1187,7 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     k.innerHTML='<option value="">'+esc(S.klass)+' *</option>'+KLASS_LIST.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join('');
     if(cs&&SCHOOL_LIST.indexOf(cs)>-1) s.value=cs; else if(SCHOOL_LIST.length===1) s.value=SCHOOL_LIST[0];
     if(ck) k.value=ck;
+    var a=$('#aSch'); if(a){ var ca=a.value; a.innerHTML='<option value="">'+esc(S.school)+' *</option>'+SCHOOL_LIST.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join('')+(window.__msAdminOwner?'<option value="*">'+esc(S.adm_all)+'</option>':''); if(ca) a.value=ca; }
   }
   try{ if(cfg.dbUrl){ fetch(String(cfg.dbUrl).replace(/\/$/,'')+'/siteContent/schools.json').then(function(r){ return r.ok?r.json():null; }).then(function(d){
     var a=Array.isArray(d)?d:(d&&typeof d==='object'?Object.keys(d).map(function(k){return d[k]}):[]);
@@ -1200,7 +1218,7 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
   document.addEventListener('click',function(e){ if(!e.target.closest('.g-lang')) closeGl(); });
   applyGate();
 
-  function showStep(n){ $('#gStart').hidden=n!=='start'; $('#gInfo').hidden=n!=='info'; }
+  function showStep(n){ $('#gStart').hidden=n!=='start'; $('#gInfo').hidden=n!=='info'; $('#gAdmin').hidden=n!=='admin'; }
   function getProf(uid){ try{ return JSON.parse(localStorage.getItem('myschool-prof-'+uid)); }catch(e){ return null; } }
   function fillInfo(u){
     var dn=(u.displayName||'').trim(), parts=dn?dn.split(/\s+/):[], em=u.email||'';
@@ -1271,13 +1289,37 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     try{ Promise.resolve(A.out()); }catch(e){}
     document.body.innerHTML='<div style="min-height:100vh;display:grid;place-items:center;text-align:center;font-family:Manrope,system-ui,sans-serif;color:#0e1f4d;background:#f1f5ff"><div><div style="font-size:96px;font-weight:800;line-height:1">404</div><p style="font-size:18px;margin:12px 0 0">Page not found</p></div></div>';
   }
+  /* ---- Admin profile: an admin only picks a school (saved per account in /admins/<uid>, with a local copy) ---- */
+  function admLocal(uid){ try{ return localStorage.getItem('myschool-adm-'+uid)||''; }catch(e){ return ''; } }
+  function adminResolve(u){
+    var loc=admLocal(u.uid);
+    if(!DBU||!fb||!fb.currentUser) return Promise.resolve(loc);
+    return fb.currentUser.getIdToken().then(function(t){ return fetch(DBU+'/admins/'+encodeURIComponent(u.uid)+'.json?auth='+t).then(function(r){ if(!r.ok) throw 0; return r.json(); }); })
+      .then(function(d){ return (d&&typeof d.school==='string'&&d.school)?d.school:loc; }).catch(function(){ return loc; });
+  }
+  function saveAdminSchool(u,sc){
+    try{ localStorage.setItem('myschool-adm-'+u.uid,sc); }catch(e){}
+    if(!DBU||!fb||!fb.currentUser) return Promise.resolve();
+    return fb.currentUser.getIdToken().then(function(t){ return fetch(DBU+'/admins/'+encodeURIComponent(u.uid)+'.json?auth='+t,{method:'PUT',body:JSON.stringify({school:sc,email:u.email||'',ts:Date.now()})}); }).catch(function(){});
+  }
+  function finishAdmin(u,sc){
+    window.__msAdminSchool=sc;
+    var ap={done:true,name:'Admin',klass:'',school:sc==='*'?'':sc,dob:'',phone:'',email:u.email||'',photo:''};
+    try{ localStorage.setItem('myschool-prof-'+u.uid,JSON.stringify(ap)); }catch(e){}
+    if(window.__msAdminRefresh) window.__msAdminRefresh(sc);
+    activate(u,ap);
+  }
+  function toAdminPick(u){
+    var em=u.email||''; $('#gAdmAv').textContent=(u.displayName||em||'?').charAt(0).toUpperCase();
+    $('#gAdmName').textContent=u.displayName||em; $('#gAdmMail').textContent=u.displayName?em:'';
+    msg('gMsg4',''); fillGateSelects(); root.classList.remove('authed'); gate.hidden=false; showStep('admin');
+  }
   function onUser(u){
+    window.__msAdminOwner=isOwnerUser(u); if(!u) window.__msAdminSchool='';
     setAdmin(isAdminUser(u));
     if(isAdminUser(u)){
-      /* the admin account enters straight away: no name/school/class/phone questions, and it is not listed among students */
-      cur=u; var ap=getProf(u.uid);
-      if(!(ap&&ap.done)){ ap={done:true,name:'Admin',klass:'',school:'',dob:'',phone:'',email:u.email||'',photo:''}; try{ localStorage.setItem('myschool-prof-'+u.uid,JSON.stringify(ap)); }catch(e){} }
-      activate(u,ap); return;
+      /* admins do not fill in name/class/phone/birthday: they only choose their school (asked once, then remembered) */
+      cur=u; adminResolve(u).then(function(sc){ if(cur!==u) return; if(sc) finishAdmin(u,sc); else toAdminPick(u); }); return;
     }
     if(!u){ cur=null; if(guestMode){ enterGuest(); return; } root.classList.remove('authed'); gate.hidden=false; showStep('start'); return; }
     cur=u; var p=getProf(u.uid);
@@ -1359,27 +1401,6 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     A.google().then(function(){ b.disabled=false; }).catch(function(e){ b.disabled=false; msg('gMsg1',errText(e)); });
   });
 
-  /* email + password sign-in (works on iPhones and for people without a Google account) */
-  function emailGo(mode){
-    msg('gMsg1','');
-    var em=$('#eMail').value.trim().toLowerCase(), pw=$('#ePass').value;
-    if(!em||!pw){ msg('gMsg1',S.needboth); return; }
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ msg('gMsg1',S.bademail); return; }
-    if(!A.ready()){ msg('gMsg1',S.net); return; }
-    var bs=[$('#gEmailIn'),$('#gEmailUp')]; bs.forEach(function(b){ b.disabled=true; });
-    Promise.resolve(A.email(mode,em,pw)).then(function(){ bs.forEach(function(b){ b.disabled=false; }); })
-      .catch(function(e){ bs.forEach(function(b){ b.disabled=false; }); msg('gMsg1',errText(e)); });
-  }
-  $('#fEmail').addEventListener('submit',function(ev){ ev.preventDefault(); emailGo('in'); });
-  $('#gEmailUp').addEventListener('click',function(){ emailGo('up'); });
-  $('#gReset').addEventListener('click',function(){
-    msg('gMsg1','');
-    var em=$('#eMail').value.trim().toLowerCase();
-    if(!em){ msg('gMsg1',S.resetneed); return; }
-    if(!A.ready()){ msg('gMsg1',S.net); return; }
-    Promise.resolve(A.reset(em)).then(function(){ msg('gMsg1',S.resetsent); }).catch(function(e){ msg('gMsg1',errText(e)); });
-  });
-
   $('#gApple').addEventListener('click',function(){
     msg('gMsg1','');
     if(!A.ready()){ msg('gMsg1',S.net); return; }
@@ -1415,6 +1436,18 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     location.reload();
   });
   $('#gSwitch').addEventListener('click',function(){ Promise.resolve(A.out()).then(function(){ onUser(null); }); });
+  $('#gAdmSwitch').addEventListener('click',function(){ Promise.resolve(A.out()).then(function(){ onUser(null); }); });
+  $('#fAdmin').addEventListener('submit',function(ev){
+    ev.preventDefault(); if(!cur||!isAdminUser(cur)) return;
+    var v=$('#aSch').value;
+    if(!v||(v==='*'&&!window.__msAdminOwner)||(v!=='*'&&SCHOOL_LIST.indexOf(v)<0)){ msg('gMsg4',S.fill); return; }
+    var btn=$('#fAdmin button[type=submit]'); btn.disabled=true; msg('gMsg4','');
+    saveAdminSchool(cur,v).then(function(){ btn.disabled=false; finishAdmin(cur,v); });
+  });
+  window.__msSetAdminSchool=function(sc){
+    var u=cur; if(!u||!isAdminUser(u)||!sc||(sc==='*'&&!window.__msAdminOwner)) return Promise.resolve(false);
+    return saveAdminSchool(u,sc).then(function(){ finishAdmin(u,sc); return true; });
+  };
 
   /* personal info step */
   (function(){ var el=$('#uPhone'); function chk(show){ var v=el.value.trim(), bad=!!v&&!window.uzPhone(v); el.setAttribute('aria-invalid',bad?'true':'false'); if(!bad) msg('gMsg2',''); else if(show||/[^\d\s()+-]/.test(v)) msg('gMsg2',S.badphone); }
@@ -1886,22 +1919,36 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
 
   /* Admin = the signed-in Google account set in ADMIN_EMAIL (decided in the sign-in script); there is no password. */
   var isAdmin=!GUEST&&!!window.__msAdminFlag;
+  /* owner = first email in ADMIN_EMAILS; '*' = all schools. Any other admin sees and posts only for the school chosen in the admin profile. */
+  function isOwner(){ return !!window.__msAdminOwner; }
+  function admSch(){ var s=window.__msAdminSchool||''; return isOwner()?(s||'*'):s; }
+  function restricted(){ return isAdmin&&admSch()!=='*'; }
+  function admKey(){ return schKey(admSch()); }
+  function mineSch(x){ return schKey(x||SCH0)===admKey(); }
   function syncAdminNav(){
     var b=$('#nav [data-go="arizalar"]'); if(b) b.hidden=!isAdmin;
     $$('[data-go="admin"]').forEach(function(x){ x.hidden=!isAdmin; x.style.display=isAdmin?'':'none'; });
-    $$('[data-go="profil"]').forEach(function(x){ x.hidden=isAdmin; x.style.display=isAdmin?'none':''; });
+    $$('#aTabs [data-owner]').forEach(function(x){ x.hidden=!isOwner(); });
+    var pc=$('#pfCard'); if(pc) pc.classList.toggle('adm',!!isAdmin);
+    if(!isOwner()&&(cur==='hero'||cur==='schools')){ cur='news'; applyType(); }
   }
   window.__msSetAdmin=function(v){
     v=!!v&&!GUEST; if(v===isAdmin) return; isAdmin=v; syncAdminNav();
     if(!v&&(curView==='admin'||curView==='arizalar')) go('asosiy');
     if(typeof rebuildAll==='function'){ try{ rebuildAll(); }catch(e){} }
   };
+  window.__msAdminRefresh=function(sc){
+    if(!isAdmin) return;
+    profile.name='Admin'; profile.klass=''; profile.school=(sc==='*')?'':sc;
+    try{ localStorage.setItem('myschool-profile',JSON.stringify(profile)); }catch(e){}
+    re.sch=''; rs.sch=''; rs.cls=null;
+    syncAdminNav(); applyType(); fillProfile(); rebuildAll();
+  };
   function valid(id){return id==='admin'||VIEWS.some(function(v){return v.id===id})}
   var pendAps='';
   function show(id){
     var prev=curView;
     if(!valid(id)) id='asosiy';
-    if(id==='profil'&&isAdmin) id='asosiy';
     if((id==='admin'||id==='arizalar')&&!isAdmin){ if(curView!==id&&document.documentElement.classList.contains('authed')) toast(tr("Admin paneliga faqat admin hisobi kira oladi.")); id='asosiy'; try{ location.hash='asosiy'; }catch(e){} }
     $$('[data-view]').forEach(function(s){s.hidden=s.getAttribute('data-view')!==id});
     $$('#nav [data-go],#tabs [data-go]').forEach(function(b){
@@ -2083,7 +2130,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   });
   /* ---------- Rating ---------- */
   var rs={p:'w',mode:'s',g:'all',cls:null,fk:'',all:false,sch:''};
-  function ratingSK(){ if(GUEST) return '\u0000none'; if(isAdmin) return schKey(rs.sch||schoolList()[0]||SCH0); return schKey(profile.school); }
+  function ratingSK(){ if(GUEST) return '\u0000none'; if(isAdmin) return restricted()?admKey():schKey(rs.sch||schoolList()[0]||SCH0); return schKey(profile.school); }
   var profile={name:'Foydalanuvchi',klass:'9-A',school:'1-son maktab',dob:'12.03.2010',email:'',phone:'',photo:''};
   try{ var saved=GUEST?null:localStorage.getItem('myschool-profile'); if(saved){ var o=JSON.parse(saved); for(var k in o){ if(typeof o[k]!=='string'||!(k in profile)) continue; if(k==='photo'&&o[k]&&o[k].indexOf('data:image/')!==0) continue; profile[k]=o[k]; } } }catch(e){}
 
@@ -2151,7 +2198,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function renderRating(){
     avRefresh();
     var sw=$('#fSchoolWrap');
-    if(sw){ sw.hidden=!isAdmin; if(isAdmin){ var sl=schoolList(); if(!rs.sch||sl.indexOf(rs.sch)<0) rs.sch=sl[0]||SCH0; var fs=$('#fSchool'), hk=sl.join('|'); if(fs.getAttribute('data-k')!==hk){ fs.setAttribute('data-k',hk); fs.innerHTML=sl.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join(''); } fs.value=rs.sch; } }
+    if(sw){ sw.hidden=!(isAdmin&&!restricted()); if(isAdmin&&!restricted()){ var sl=schoolList(); if(!rs.sch||sl.indexOf(rs.sch)<0) rs.sch=sl[0]||SCH0; var fs=$('#fSchool'), hk=sl.join('|'); if(fs.getAttribute('data-k')!==hk){ fs.setAttribute('data-k',hk); fs.innerHTML=sl.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join(''); } fs.value=rs.sch; } }
     var isS=rs.mode==='s', data=computeRating(rs.p), vals=fillRFilter();
     $$('#rMode button').forEach(function(b){ b.setAttribute('aria-pressed',String(b.getAttribute('data-rm')===rs.mode)); });
     var full=ranked(data.students,'name'), me=findMe(data.students), meR=me&&full.filter(function(x){return x.id===me.id})[0];
@@ -2264,6 +2311,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   window.__msPubAvatar=pubAvatar;
 
 /* ---------- Theme toggle + profile photo viewer ---------- */
+  D["Barcha maktablar"]={ru:'Все школы',en:'All schools',kk:'Барлық мектептер'};
   ICONS.sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
   ICONS.moon='<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
   D["Qorong'u rejim"]={ru:'Тёмный режим',en:'Dark mode',kk:'Қараңғы режим'}; D["Yorug' rejim"]={ru:'Светлый режим',en:'Light mode',kk:'Жарық режим'};
@@ -2297,6 +2345,11 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     sel.value=curVal||'';
   }
   function fillProfileSelects(){
+    if(isAdmin){
+      var as=$('#in-school'), cv=admSch(), al=schoolList().slice(); if(cv&&cv!=='*'&&al.indexOf(cv)<0) al.push(cv);
+      as.innerHTML=al.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join('')+(isOwner()?'<option value="*">'+esc(tr('Barcha maktablar'))+'</option>':'');
+      as.value=cv||(isOwner()?'*':''); return;
+    }
     var kv=profile.klass, nk=normKlass(kv); if(KLASS_LIST.indexOf(nk)>-1) kv=nk;
     fillSel($('#in-klass'),KLASS_LIST,kv); fillSel($('#in-school'),schoolList(),profile.school);
   }
@@ -2307,6 +2360,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function fillProfile(){
     $$('[data-pf]').forEach(function(el){ var v=profile[el.getAttribute('data-pf')]; el.textContent=(v==='Foydalanuvchi'||v==='Mehmon'||v==='1-son maktab')?tr(v):(v||'—'); });
     fillProfileSelects();
+    if(isAdmin) $$('[data-pf="school"]').forEach(function(el){ el.textContent=admSch()==='*'?tr('Barcha maktablar'):(admSch()||'—'); });
     KEYS.forEach(function(k){ if(k==='klass'||k==='school') return; $('#in-'+k).value=k==='dob'?dobToIso(profile.dob):profile[k]; });
     showAvatars(pendPhoto!==null?pendPhoto:profile.photo);
   }
@@ -2331,6 +2385,12 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   }
   $('#pfEdit').addEventListener('click',function(){
     if(GUEST){ guestBlock('profile'); return; }
+    if(isAdmin){
+      if(!$('#pfCard').classList.contains('editing')){ pendPhoto=null; setEditing(true); return; }
+      var nsc=$('#in-school').value; if(!nsc||(nsc==='*'&&!isOwner())) return;
+      window.__msSetAdminSchool(nsc).then(function(ok){ setEditing(false); toast(tr(ok?"Ma'lumotlar saqlandi":"Saqlab bo'lmadi")); });
+      return;
+    }
     var editing=$('#pfCard').classList.contains('editing');
     if(!editing){ pendPhoto=null; setEditing(true); return; }
     var nm=$('#in-name').value.trim().replace(/\s+/g,' '), kl=$('#in-klass').value.trim(), sc=$('#in-school').value.trim(), dv=$('#in-dob').value, ph=$('#in-phone').value.trim();
@@ -2448,7 +2508,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     return out;
   }
   function mySchKey(){ return (GUEST||isAdmin)?'':schKey(profile.school); }
-  function visibleItem(p){ if(isAdmin) return true; var sc=p.school||SCH0; if(sc==='*') return true; var k=mySchKey(); return !!k&&schKey(sc)===k; }
+  function visibleItem(p){ if(isAdmin){ if(!restricted()) return true; var s0=p.school||SCH0; return s0==='*'||mineSch(s0); } var sc=p.school||SCH0; if(sc==='*') return true; var k=mySchKey(); return !!k&&schKey(sc)===k; }
   function rebuildAll(){
     NEWS=store.news.filter(visibleItem).sort(byNew).map(function(p){
       return {id:'p'+p.id,theme:'school',icon:'news',date:p.date,title:esc(p.title),text:esc(p.text),more:br(p.more),imgs:p.imgs,link:p.link};
@@ -2469,7 +2529,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     sel.innerHTML='<option value="all">'+tr('Barcha sana')+'</option>'+ms.map(function(m){return '<option value="'+m+'">'+mName(m)+'</option>'}).join('');
     sel.value=(keep==='all'||ms.indexOf(keep)>-1)?keep:'all';
     CLASSES=allClasses(); STUDENTS=store.students; PTS=store.pts; applyHero();
-    renderNews(); renderEvents(); renderInits(); renderRating(); renderAdmin(); renderNotes(); renderFaq();
+    fillASchool(); renderNews(); renderEvents(); renderInits(); renderRating(); renderAdmin(); renderNotes(); renderFaq();
   }
   // without Firebase, visitors get the published content from news.json (unless this browser has its own copy)
   function loadNewsJson(){
@@ -2494,7 +2554,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(cur==='users') return renderUsers();
     if(cur==='rating') return renderRatingEditor();
     if(cur==='hero') return renderHeroEditor();
-    var l=$('#aList'), arr=store[cur];
+    var l=$('#aList'), arr=store[cur]; if(restricted()) arr=arr.filter(function(p){ return mineSch(p.school); });
     l.innerHTML=arr.length?arr.slice().sort(byNew).map(function(p){
       var meta=(cur==='news'?p.date:(p.cat+' · '+p.date))+' · '+(p.school==='*'?'Barcha maktablar':(p.school||SCH0));
       return '<div class="card arow"><div><b>'+esc(p.title)+'</b><span class="date">'+esc(meta)+(p.imgs.length?' · '+p.imgs.length+' rasm':'')+'</span></div>'+
@@ -2521,6 +2581,12 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     draft={editId:null,imgs:[]};
     ['#aTitle','#aText','#aMore','#aDate','#aLink'].forEach(function(k){ $(k).value=''; });
     $('#aImgs').value=''; $('#aSave').textContent='Joylash'; $('#aCancel').hidden=true; renderThumbs();
+  }
+  function fillASchool(){
+    var as=$('#aSchool'); if(!as) return; var keep=as.value;
+    if(restricted()){ var sc=admSch(); as.innerHTML='<option value="'+esc(sc)+'">'+esc(sc||'—')+'</option>'; as.value=sc; as.disabled=true; return; }
+    as.disabled=false;
+    as.innerHTML=schoolList().map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join('')+'<option value="*">Barcha maktablar</option>'; if(keep) as.value=keep;
   }
   function applyType(){
     if(cur==='hero'){
@@ -2551,7 +2617,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     $('#aForm').hidden=false;
     var c=CFG[cur];
     $('#aTitle').placeholder=c.ph;
-    (function(){ var as=$('#aSchool'), keep=as.value; as.innerHTML=schoolList().map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join('')+'<option value="*">Barcha maktablar</option>'; if(keep) as.value=keep; })();
+    fillASchool();
     $('#aCatRow').hidden=!c.cats; $('#aMonthRow').hidden=!c.month; $('#aDateRow').hidden=!c.date;
     if(c.cats) $('#aCat').innerHTML=c.cats.map(function(x){return '<option value="'+x+'">'+x+'</option>'}).join('');
     if(c.date){ $('#aDateLbl').textContent=c.dateLbl; $('#aDate').placeholder=c.datePh; }
@@ -2597,7 +2663,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(c.date&&!date){ toast('Sana yoki jadvalni yozing'); return; }
     var rawL=$('#aLink').value.trim(), link=cleanLink(rawL); if(rawL&&!link){ toast("Havola noto'g'ri. https:// bilan boshlang"); return; }
     if(!text) text=more.length>140?more.slice(0,137)+'...':more;
-    var cat=c.cats?$('#aCat').value:'', month=c.month?$('#aMonth').value:'', school=$('#aSchool').value||SCH0;
+    var cat=c.cats?$('#aCat').value:'', month=c.month?$('#aMonth').value:'', school=restricted()?admSch():($('#aSchool').value||SCH0);
     var prev=JSON.stringify(store), editing=draft.editId, arr=store[cur];
     if(editing){
       arr.forEach(function(p){ if(p.id===editing){ p.school=school; p.title=title; p.text=text; p.more=more; p.imgs=draft.imgs.slice(); p.link=link; p.cat=cat; p.month=month; if(c.date) p.date=date; } });
@@ -2648,12 +2714,12 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     ['news','events','inits'].forEach(function(k){ o[k].forEach(function(x){ if(x&&typeof x==='object'&&x.imgs) x.imgs=normArr(x.imgs); }); });
     return o;
   }
-  var remoteOk=!FB.url, pubBusy=false, pubDirty=false;
+  var remoteOk=!FB.url, pubBusy=false, pubDirty=false, lastUpd=0;
   if(FB.url){
     fetch(FB.url+'/siteContent.json',{cache:'no-store'}).then(okj).then(function(d){
       remoteOk=true;
       if(d&&typeof d==='object'){
-        var fresh=cleanStore(fromRemote(d));
+        lastUpd=+d.updated||0; var fresh=cleanStore(fromRemote(d));
         // never lose unpublished local work: keep the previous local copy as a backup if it differs
         try{ if(hasLocal&&JSON.stringify(store)!==JSON.stringify(fresh)) localStorage.setItem('myschool-posts-prev',JSON.stringify(store)); }catch(e){}
         store=fresh; contentLoaded=true; hasLocal=true;
@@ -2662,23 +2728,44 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
       }else if(!hasLocal) loadNewsJson(); // nothing published yet: fall back to news.json
     }).catch(function(){ if(!hasLocal) loadNewsJson(); });
   }
+  /* A school admin publishes only the items of their own school: the latest published data is fetched first and every other school's items are kept as they are. */
+  function mergeFor(d){
+    var r=cleanStore(fromRemote(d)), o=Object.assign({},r);
+    ['news','events','inits'].forEach(function(n){ o[n]=r[n].filter(function(x){ return !mineSch(x.school); }).concat(store[n].filter(function(x){ return mineSch(x.school); })); });
+    var other={}, mine={};
+    r.students.forEach(function(x){ if(!mineSch(x.sc)) other[x.id]=1; });
+    store.students.forEach(function(x){ if(mineSch(x.sc)) mine[x.id]=1; });
+    o.students=r.students.filter(function(x){ return !mineSch(x.sc); }).concat(store.students.filter(function(x){ return mineSch(x.sc); }));
+    o.pts=r.pts.filter(function(e){ return e.t==='s'?!!other[e.ref]:!mineSch(e.sc); }).concat(store.pts.filter(function(e){ return e.t==='s'?!!mine[e.ref]:mineSch(e.sc); }));
+    return o;
+  }
   function publish(){
     if(!FB.url||!isAdmin) return;
     if(pubBusy){ pubDirty=true; return; }
     if(!remoteOk){ toast("Firebase'dan ma'lumot yuklanmadi, shuning uchun e'lon qilinmadi. Sahifani yangilab, qayta urining."); return; }
-    pubBusy=true;
+    pubBusy=true; var merged=null, ts=0;
     ensureToken().then(function(t){
       if(!t) throw {code:'auth'};
-      var body=JSON.stringify(Object.assign({},store,{updated:Date.now()}));
-      return fetch(FB.url+'/siteContent.json?auth='+encodeURIComponent(t),{method:'PUT',body:body});
+      var q='?auth='+encodeURIComponent(t);
+      return fetch(FB.url+'/siteContent.json'+q,{cache:'no-store'}).then(okj).then(function(d){
+        d=(d&&typeof d==='object')?d:{};
+        if(restricted()) merged=mergeFor(d);
+        else{ if(lastUpd&&+d.updated&&+d.updated>lastUpd) throw {code:'conflict'}; merged=store; }
+        ts=Date.now();
+        return fetch(FB.url+'/siteContent.json'+q,{method:'PUT',body:JSON.stringify(Object.assign({},merged,{updated:ts}))});
+      });
     }).then(function(r){
       if(!r.ok) throw {code:r.status};
+      lastUpd=ts;
+      if(merged!==store){ store=merged; try{ localStorage.setItem('myschool-posts',JSON.stringify(store)); }catch(e){} rebuildAll(); }
       toast("Saqlandi va hammaga e'lon qilindi");
     }).catch(function(e){
       var c=e&&e.code;
-      toast(c==='auth'||c===401||c===403
-        ? "E'lon qilinmadi: admin Google hisobi bilan saytga kiring (Firebase ruxsat bermadi)."
-        : "Firebase'ga saqlab bo'lmadi. Internetni tekshirib, qayta urining.");
+      toast(c==='conflict'
+        ? "Boshqa admin yangi ma'lumot joylagan. Sahifani yangilab, qayta urining."
+        : (c==='auth'||c===401||c===403
+          ? "E'lon qilinmadi: admin Google hisobi bilan saytga kiring (Firebase ruxsat bermadi)."
+          : "Firebase'ga saqlab bo'lmadi. Internetni tekshirib, qayta urinib ko'ring."));
     }).then(function(){ pubBusy=false; if(pubDirty){ pubDirty=false; publish(); } });
   }
   var DB={
@@ -2785,9 +2872,9 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function apGroups(){
     var g=[], idx={};
     function add(kind,id,title,arch){ var k=apKey(kind,id), o={key:k,kind:kind==='init'?'init':'event',id:id,title:title,arch:!!arch,apps:[]}; idx[k]=o; g.push(o); return o; }
-    EVENTS.forEach(function(e){ add('event',e.id,plain(e.title)+(e.sch&&e.sch!=='*'?' ('+e.sch+')':''),false); });
-    INITS.forEach(function(e){ add('init',e.id,plain(e.title)+(e.sch&&e.sch!=='*'?' ('+e.sch+')':''),false); });
-    apAll.forEach(function(a){ var o=idx[apKey(a.kind,a.evId)]||add(a.kind,a.evId,a.evTitle||'—',contentLoaded); o.apps.push(a); });
+    EVENTS.forEach(function(e){ if(restricted()&&!mineSch(e.sch)) return; add('event',e.id,plain(e.title)+(e.sch&&e.sch!=='*'?' ('+e.sch+')':''),false); });
+    INITS.forEach(function(e){ if(restricted()&&!mineSch(e.sch)) return; add('init',e.id,plain(e.title)+(e.sch&&e.sch!=='*'?' ('+e.sch+')':''),false); });
+    apAll.forEach(function(a){ var o=idx[apKey(a.kind,a.evId)]; if(!o){ if(restricted()) return; o=add(a.kind,a.evId,a.evTitle||'—',contentLoaded); } o.apps.push(a); });
     return g;
   }
   function apRow(a){
@@ -2815,7 +2902,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
         (list.length?list.map(apRow).join(''):'<p class="card empty">'+(sel.apps.length?'Bu holatda ariza yo\'q.':'Bu yerga hali ariza topshirilmagan.')+'</p>');
       return;
     }
-    var tot=apAll.length, pend=apCnt(apAll).p;
+    var vis=[]; groups.forEach(function(g){ vis=vis.concat(g.apps); }); var tot=vis.length, pend=apCnt(vis).p;
     function sec(title,arr){ if(!arr.length) return ''; arr.sort(function(a,b){ return apCnt(b.apps).p-apCnt(a.apps).p||b.apps.length-a.apps.length; }); return '<h2 class="sub" style="margin:10px 0 0">'+title+'</h2>'+arr.map(apCard).join(''); }
     var ev=groups.filter(function(g){return !g.arch&&g.kind==='event'}), it=groups.filter(function(g){return !g.arch&&g.kind==='init'}), ar=groups.filter(function(g){return g.arch});
     l.innerHTML=apNote()+'<p class="ap-sum">Jami '+tot+' ariza'+(pend?' · '+pend+' tasi javob kutmoqda':'')+'</p>'+
@@ -2830,7 +2917,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
 
 /* ---------- Admin: rating (students + classes, points log) ---------- */
   var re={cls:'',uid:'',q:'',pts:'',note:'',sch:''};
-  function ensureReSch(){ var sl=schoolList(); if(!re.sch||sl.indexOf(re.sch)<0) re.sch=sl[0]||SCH0; }
+  function ensureReSch(){ if(restricted()){ re.sch=admSch(); return; } var sl=schoolList(); if(!re.sch||sl.indexOf(re.sch)<0) re.sch=sl[0]||SCH0; }
   function schUsers(){ ensureReSch(); var k=schKey(re.sch); return realUsers().filter(function(u){ return schKey(u.school||SCH0)===k; }); }
   function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
   function rosterEdit(){ if(!store.classes) store.classes=BASE_CLASSES.map(function(c){return {n:c.n,g:c.g}}); return store.classes; }
@@ -2857,7 +2944,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     if(!re.cls) re.cls=names.filter(function(n){return cnt[n]})[0]||names[0]||'';
     var sel=names.map(function(n){ return opt(n,n+' ('+(cnt[n]||0)+')',n===re.cls); }).join('')+(cnt['?']?opt('?',"Sinfi aniqlanmagan ("+cnt['?']+')',re.cls==='?'):'');
     var award='<div class="card adm"><b>Ball berish</b><p class="hint">Sinfni tanlang, o\'quvchini bosing va ball bering. Ro\'yxatdan o\'tgan hamma foydalanuvchi o\'z sinfida avtomatik turadi. Ball o\'quvchining sinf hisobiga ham o\'zi qo\'shiladi.</p>'+
-      '<label>Maktab<select class="field" id="reSch">'+schoolList().map(function(x){ return opt(x,x,x===re.sch); }).join('')+'</select></label>'+
+      (restricted()?'':'<label>Maktab<select class="field" id="reSch">'+schoolList().map(function(x){ return opt(x,x,x===re.sch); }).join('')+'</select></label>')+
       '<label>Sinf<select class="field" id="reCls">'+sel+'</select></label>'+
       '<input class="field" id="ruQ" type="search" placeholder="Ism bo\'yicha qidirish (hamma sinflardan)..." autocomplete="off" value="'+esc(re.q)+'">'+
       '<div id="ruBox"></div></div>';
@@ -2986,7 +3073,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     var l=$('#aList'), note=FB.url?'':'<p class="hint">Demo rejim: foydalanuvchilar faqat shu brauzerda ko\'rinadi. Hammasini ko\'rish uchun Firebase ulang.</p>';
     l.innerHTML=note+'<p class="card empty">Yuklanmoqda...</p>';
     usersList().then(function(arr){
-      arr.sort(function(a,b){return (b.ts||0)-(a.ts||0)}); usersCache=arr; dupCount={}; arr.forEach(function(u){ var k=dupKey(u); if(k) dupCount[k]=(dupCount[k]||0)+1; });
+      if(restricted()) arr=arr.filter(function(u){ return mineSch(u.school); }); arr.sort(function(a,b){return (b.ts||0)-(a.ts||0)}); usersCache=arr; dupCount={}; arr.forEach(function(u){ var k=dupKey(u); if(k) dupCount[k]=(dupCount[k]||0)+1; });
       l.innerHTML=note+'<div class="card arow"><div><b>'+arr.length+' ta ro\'yxatdan o\'tgan foydalanuvchi</b></div><div class="act"><button type="button" class="pill" id="uExport">CSV yuklab olish</button></div></div>'+
         (arr.length?'<input class="field" id="uQ" type="search" placeholder="Foydalanuvchini qidirish..." autocomplete="off" value="'+esc(uQ)+'" style="margin:10px 0"><div id="uBox" style="display:grid;gap:10px"></div>':'<p class="card empty">Hali hech kim ro\'yxatdan o\'tmagan.</p>'); drawUsers();
     }).catch(function(){ token=''; l.innerHTML=note+'<p class="card empty">Ro\'yxatni yuklab bo\'lmadi. Firebase Realtime Database qoidalarida (Rules) admin emailingizga o\'qishga ruxsat bering.</p><div class="adm-btns"><button type="button" class="btn small" data-ulogin>Qayta urinish</button></div>'; });
