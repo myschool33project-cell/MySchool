@@ -729,6 +729,11 @@ select.e.field{appearance:auto;-webkit-appearance:menulist;padding-right:8px}
 .prof-card.adm .av-ctl{display:none!important}
 .prof-card.adm.editing h2.v{display:block}
 .prof-card:not(.adm) #pfTagAdm,.prof-card.adm .tag:not(#pfTagAdm){display:none}
+.arow.urow{position:relative;padding-right:58px}
+.udots{position:absolute;top:10px;right:10px}
+.udots .dots{width:34px;height:34px}
+.udots .dots svg{width:18px;height:18px;fill:currentColor;stroke:none}
+.udots .umenu{min-width:200px;z-index:35}
 </style>
 
 
@@ -1170,7 +1175,8 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
   /* Guest mode: browse only (no applying, no own profile/rating, never admin). Lives for this tab only. */
   /* The ONE admin account. Change it here AND in the Firebase Realtime Database rules (the rules are the real protection). */
   var ADMIN_EMAILS=['myschool33.project@gmail.com']; /* add more admin emails here (and in the Firebase rules). The FIRST one is the main admin: it can post to all schools. Every other admin is tied to ONE school. */
-  function isAdminUser(u){ return !demo&&!!u&&u.emailVerified!==false&&ADMIN_EMAILS.indexOf(String(u.email||'').trim().toLowerCase())>-1; }
+  function isAdminUser(u){ return !demo&&!!u&&u.emailVerified!==false&&(ADMIN_EMAILS.indexOf(String(u.email||'').trim().toLowerCase())>-1||(!!vipUid&&u.uid===vipUid)); }
+  var vipUid='', vipFor='', vipSchool=''; /* VIP = a normal user the main admin promoted (record in /vips/<uid>); works like an admin, for ONE school */
   function isOwnerUser(u){ return isAdminUser(u)&&String(u.email||'').trim().toLowerCase()===ADMIN_EMAILS[0]; }
   function setAdmin(v){ window.__msAdminFlag=!!v; if(window.__msSetAdmin) window.__msSetAdmin(!!v); }
   var guestMode=false; try{ guestMode=sessionStorage.getItem('myschool-guest')==='1'; }catch(e){}
@@ -1290,6 +1296,10 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     document.body.innerHTML='<div style="min-height:100vh;display:grid;place-items:center;text-align:center;font-family:Manrope,system-ui,sans-serif;color:#0e1f4d;background:#f1f5ff"><div><div style="font-size:96px;font-weight:800;line-height:1">404</div><p style="font-size:18px;margin:12px 0 0">Page not found</p></div></div>';
   }
   /* ---- Admin profile: an admin only picks a school (saved per account in /admins/<uid>, with a local copy) ---- */
+  function vipResolve(u){
+    return fb.currentUser.getIdToken().then(function(t){ return fetch(DBU+'/vips/'+encodeURIComponent(u.uid)+'.json?auth='+t).then(function(r){ if(!r.ok) throw 0; return r.json(); }); })
+      .then(function(d){ return (d&&typeof d.school==='string'&&d.school)?d:null; }).catch(function(){ return null; });
+  }
   function admLocal(uid){ try{ return localStorage.getItem('myschool-adm-'+uid)||''; }catch(e){ return ''; } }
   function adminResolve(u){
     var loc=admLocal(u.uid);
@@ -1304,7 +1314,7 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
   }
   function finishAdmin(u,sc){
     window.__msAdminSchool=sc;
-    var ap={done:true,name:'Admin',klass:'',school:sc==='*'?'':sc,dob:'',phone:'',email:u.email||'',photo:''};
+    var ap={done:true,admin:true,name:'Admin',klass:'',school:sc==='*'?'':sc,dob:'',phone:'',email:u.email||'',photo:''};
     try{ localStorage.setItem('myschool-prof-'+u.uid,JSON.stringify(ap)); }catch(e){}
     if(window.__msAdminRefresh) window.__msAdminRefresh(sc);
     activate(u,ap);
@@ -1315,14 +1325,22 @@ window.fmtPhone=function(d){ return '+998 '+d.slice(0,2)+' '+d.slice(2,5)+' '+d.
     msg('gMsg4',''); fillGateSelects(); root.classList.remove('authed'); gate.hidden=false; showStep('admin');
   }
   function onUser(u){
+    if(!u){ vipFor=''; vipUid=''; vipSchool=''; }
+    else if(!demo&&DBU&&fb&&fb.currentUser&&!isOwnerUser(u)&&vipFor!==u.uid){
+      vipFor=u.uid;
+      vipResolve(u).then(function(rec){ if(!fb.currentUser||fb.currentUser.uid!==u.uid) return; vipUid=rec?u.uid:''; vipSchool=rec?rec.school:''; onUser(u); });
+      return;
+    }
     window.__msAdminOwner=isOwnerUser(u); if(!u) window.__msAdminSchool='';
     setAdmin(isAdminUser(u));
     if(isAdminUser(u)){
       /* admins do not fill in name/class/phone/birthday: they only choose their school (asked once, then remembered) */
-      cur=u; adminResolve(u).then(function(sc){ if(cur!==u) return; if(sc) finishAdmin(u,sc); else toAdminPick(u); }); return;
+      cur=u; if(vipUid===u.uid&&!isOwnerUser(u)){ finishAdmin(u,vipSchool); return; }
+      adminResolve(u).then(function(sc){ if(cur!==u) return; if(sc) finishAdmin(u,sc); else toAdminPick(u); }); return;
     }
     if(!u){ cur=null; if(guestMode){ enterGuest(); return; } root.classList.remove('authed'); gate.hidden=false; showStep('start'); return; }
     cur=u; var p=getProf(u.uid);
+    if(p&&p.admin){ try{ localStorage.removeItem('myschool-prof-'+u.uid); localStorage.removeItem('myschool-uid'); }catch(e){} p=null; } /* a former VIP goes back to a normal profile */
     if(demo||!DBU||!fb||!fb.currentUser){
       if(p&&p.done) syncThen(u,p,false,function(){ activate(u,p); }); else toInfo(u);
       return;
@@ -1930,6 +1948,7 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
     $$('[data-go="admin"]').forEach(function(x){ x.hidden=!isAdmin; x.style.display=isAdmin?'':'none'; });
     $$('#aTabs [data-owner]').forEach(function(x){ x.hidden=!isOwner(); });
     var pc=$('#pfCard'); if(pc) pc.classList.toggle('adm',!!isAdmin);
+    var pe=$('#pfEdit'); if(pe) pe.hidden=isAdmin&&!isOwner();
     if(!isOwner()&&cur==='schools'){ cur='news'; applyType(); }
   }
   window.__msSetAdmin=function(v){
@@ -3062,19 +3081,49 @@ Kelajak Lideri|Лидер будущего|Future Leader|Болашақ Лиде
   function fmtTs(t){ if(!t) return '—'; var d=new Date(t); return d.getDate()+'-'+MONTHS[d.getMonth()]+' '+d.getFullYear()+', '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
   var dupCount={}, uQ='';
   function dupKey(u){ if(!u.name) return ''; var ph=String(u.phone||'').replace(/\D/g,''); return normName(u.name)+'|'+(ph||u.dob||'-'); }
+  var vipMap={};
+  function fetchVips(){
+    if(!FB.url||!isOwner()) return Promise.resolve({});
+    return ensureToken().then(function(t){ return fetch(FB.url+'/vips.json?auth='+encodeURIComponent(t)); }).then(okj).then(function(d){ return d||{}; }).catch(function(){ return {}; });
+  }
   function userCard(u){
-    return '<div class="card arow"><div><b>'+(AVU[u.uid]?'<img class="av-s" src="'+AVU[u.uid]+'" alt="">':'')+esc(u.name||'—')+(u.klass?' · '+esc(u.klass):'')+'</b>'+(u.banned?' <span class="stat rejected">Bloklangan</span>':'')+(dupCount[dupKey(u)]>1?' <span class="stat pending">Takroriy ma\'lumot</span>':'')+
+    var v=vipMap[u.uid], dots=(isOwner()&&u.uid&&FB.url)?'<div class="udots"><button type="button" class="icon-btn dots" data-udots="'+esc(u.uid)+'" aria-haspopup="true" aria-expanded="false" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button><div class="umenu" hidden><button type="button" data-vipset="'+esc(u.uid)+'" data-on="'+(v?'0':'1')+'">'+(v?'VIP ni olib tashlash':'VIP berish')+'</button></div></div>':'';
+    return '<div class="card arow urow"><div><b>'+(AVU[u.uid]?'<img class="av-s" src="'+AVU[u.uid]+'" alt="">':'')+esc(u.name||'—')+(u.klass?' · '+esc(u.klass):'')+'</b>'+(v?' <span class="stat approved">VIP · '+esc(v.school||'')+'</span>':'')+(u.banned?' <span class="stat rejected">Bloklangan</span>':'')+(dupCount[dupKey(u)]>1?' <span class="stat pending">Takroriy ma\'lumot</span>':'')+
       '<span class="date">Maktab: '+esc(u.school||'—')+'</span>'+
       '<span class="date">Tug\'ilgan sana: '+esc(u.dob||'—')+'</span>'+
       '<span class="date">Telefon: '+esc(u.phone||'—')+'</span>'+
       '<span class="date">Google email: '+esc(u.email||'—')+'</span>'+
       '<span class="date">Ro\'yxatdan o\'tgan: '+fmtTs(u.ts)+' · Oxirgi kirish: '+fmtTs(u.lastLogin)+'</span></div>'+
-      (u.uid?'<div class="act"><button type="button" class="pill'+(u.banned?'':' solid')+'" data-uban="'+esc(u.uid)+'">'+(u.banned?'Blokdan chiqarish':'Bloklash')+'</button>'+(FB.url?'<button type="button" class="pill" data-udel="'+esc(u.uid)+'">O\'chirish</button>':'')+'</div>':'')+'</div>';
+      (u.uid?'<div class="act"><button type="button" class="pill'+(u.banned?'':' solid')+'" data-uban="'+esc(u.uid)+'">'+(u.banned?'Blokdan chiqarish':'Bloklash')+'</button>'+(FB.url&&isOwner()?'<button type="button" class="pill" data-udel="'+esc(u.uid)+'">O\'chirish</button>':'')+'</div>':'')+dots+'</div>';
   }
+  /* VIP: only the main admin can give or take it away (the Firebase rules enforce this too) */
+  function setVip(uid,on){
+    if(!isOwner()||!FB.url){ toast('Faqat bosh admin VIP bera oladi'); return; }
+    var u=usersCache.filter(function(x){return x.uid===uid})[0]; if(!u) return;
+    var sc=schoolList().filter(function(x){ return schKey(x)===schKey(u.school); })[0]||String(u.school||'').trim();
+    if(on&&!sc){ toast("Foydalanuvchining maktabi ko'rsatilmagan"); return; }
+    if(!confirm(on?('«'+(u.name||u.email)+'» ga VIP berilsinmi?\nU faqat o\'z maktabi ('+sc+') uchun e\'lon joylay oladi va uni boshqara oladi. Boshqa maktablarni ko\'rmaydi, VIP bera olmaydi.'):('«'+(u.name||u.email)+'» dan VIP olib tashlansinmi?'))) return;
+    ensureToken().then(function(t){
+      if(!t) throw 0;
+      var url=FB.url+'/vips/'+encodeURIComponent(uid)+'.json?auth='+encodeURIComponent(t);
+      return on?fetch(url,{method:'PUT',body:JSON.stringify({school:sc,email:u.email||'',name:u.name||'',ts:Date.now()})}):fetch(url,{method:'DELETE'});
+    }).then(okj).then(function(){
+      if(on) vipMap[uid]={school:sc}; else delete vipMap[uid];
+      drawUsers(); toast(on?'VIP berildi. U saytga qayta kirganda kuchga kiradi.':'VIP olib tashlandi');
+    }).catch(function(){ token=''; toast("Saqlab bo'lmadi. Firebase qoidalarini tekshiring."); });
+  }
+  $('#aList').addEventListener('click',function(e){
+    if(cur!=='users') return;
+    var d=e.target.closest('[data-udots]');
+    if(d){ var mn=d.nextElementSibling, op=mn.hidden; $$('.udots .umenu').forEach(function(x){ x.hidden=true; }); mn.hidden=!op; d.setAttribute('aria-expanded',String(op)); return; }
+    var v=e.target.closest('[data-vipset]');
+    if(v) setVip(v.getAttribute('data-vipset'),v.getAttribute('data-on')==='1');
+  });
+  document.addEventListener('click',function(e){ if(!e.target.closest('.udots')) $$('.udots .umenu').forEach(function(x){ x.hidden=true; }); });
   function renderUsers(){
     var l=$('#aList'), note=FB.url?'':'<p class="hint">Demo rejim: foydalanuvchilar faqat shu brauzerda ko\'rinadi. Hammasini ko\'rish uchun Firebase ulang.</p>';
     l.innerHTML=note+'<p class="card empty">Yuklanmoqda...</p>';
-    usersList().then(function(arr){
+    Promise.all([usersList(),fetchVips()]).then(function(res){ var arr=res[0]; vipMap=res[1]||{};
       if(restricted()) arr=arr.filter(function(u){ return mineSch(u.school); }); arr.sort(function(a,b){return (b.ts||0)-(a.ts||0)}); usersCache=arr; dupCount={}; arr.forEach(function(u){ var k=dupKey(u); if(k) dupCount[k]=(dupCount[k]||0)+1; });
       l.innerHTML=note+'<div class="card arow"><div><b>'+arr.length+' ta ro\'yxatdan o\'tgan foydalanuvchi</b></div><div class="act"><button type="button" class="pill" id="uExport">CSV yuklab olish</button></div></div>'+
         (arr.length?'<input class="field" id="uQ" type="search" placeholder="Foydalanuvchini qidirish..." autocomplete="off" value="'+esc(uQ)+'" style="margin:10px 0"><div id="uBox" style="display:grid;gap:10px"></div>':'<p class="card empty">Hali hech kim ro\'yxatdan o\'tmagan.</p>'); drawUsers();
